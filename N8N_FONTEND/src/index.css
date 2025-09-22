@@ -1,0 +1,166 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* React Flow Styles */
+.react-flow__minimap {
+  background-color: hsl(var(--n8n-sidebar)) !important;
+}
+
+.react-flow__controls {
+  background-color: hsl(var(--n8n-sidebar)) !important;
+}
+
+.react-flow__controls button {
+  background-color: hsl(var(--n8n-header)) !important;
+  border-color: hsl(var(--n8n-node-border)) !important;
+  color: hsl(var(--n8n-sidebar-foreground)) !important;
+}
+
+.react-flow__controls button:hover {
+  background-color: hsl(var(--primary)) !important;
+}
+
+.react-flow__edge-path {
+  stroke: hsl(var(--workflow-connection)) !important;
+}
+
+.react-flow__handle {
+  background-color: hsl(var(--workflow-connection)) !important;
+  border-color: hsl(var(--n8n-node-border)) !important;
+}
+
+.react-flow__handle.connectingfrom {
+  background-color: hsl(var(--primary)) !important;
+}
+
+/* n8n-like workflow automation app design system */
+
+@layer base {
+  :root {
+    /* Light theme (default) */
+    --background: 0 0% 100%;
+    --foreground: 210 40% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 210 40% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 40% 8%;
+    --primary: 14 100% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 210 40% 8%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 210 40% 8%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 31% 91%;
+    --input: 214 31% 91%;
+    --ring: 14 100% 60%;
+    --radius: 0.5rem;
+
+    /* n8n specific colors */
+    --n8n-primary: 14 100% 60%; /* Orange accent */
+    --n8n-primary-foreground: 0 0% 100%;
+    --n8n-canvas: 220 13% 18%;
+    --n8n-canvas-foreground: 0 0% 100%;
+    --n8n-sidebar: 220 13% 14%;
+    --n8n-sidebar-foreground: 0 0% 95%;
+    --n8n-header: 220 13% 16%;
+    --n8n-node-bg: 220 13% 25%;
+    --n8n-node-border: 220 13% 35%;
+    --n8n-success: 142 76% 36%;
+    --n8n-warning: 38 92% 50%;
+    --n8n-error: 0 84% 60%;
+    
+    /* Workflow editor */
+    --workflow-bg: 220 13% 18%;
+    --workflow-grid: 220 13% 22%;
+    --workflow-node: 220 13% 25%;
+    --workflow-node-active: 14 100% 60%;
+    --workflow-connection: 220 13% 45%;
+  }
+
+  .dark {
+    /* Dark theme - n8n style */
+    --background: 220 13% 18%;
+    --foreground: 0 0% 95%;
+    --card: 220 13% 20%;
+    --card-foreground: 0 0% 95%;
+    --popover: 220 13% 16%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 14 100% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 13% 25%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 220 13% 25%;
+    --muted-foreground: 220 9% 65%;
+    --accent: 220 13% 25%;
+    --accent-foreground: 0 0% 95%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 95%;
+    --border: 220 13% 30%;
+    --input: 220 13% 25%;
+    --ring: 14 100% 60%;
+  }
+
+  /* Global animations and transitions */
+  .animate-node-pulse {
+    animation: node-pulse 2s infinite;
+  }
+
+  .animate-connection-flow {
+    animation: connection-flow 3s infinite linear;
+  }
+
+  .transition-node {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Workflow canvas styles */
+  .workflow-canvas {
+    background-color: hsl(var(--workflow-bg));
+    background-image: 
+      radial-gradient(circle at 1px 1px, hsl(var(--workflow-grid)) 1px, transparent 0);
+    background-size: 20px 20px;
+  }
+}
+
+@keyframes node-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.7);
+  }
+  70% { 
+    box-shadow: 0 0 0 10px hsl(var(--primary) / 0);
+  }
+}
+
+@keyframes connection-flow {
+  0% {
+    stroke-dashoffset: 20;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

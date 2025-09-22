@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "public"."AvliableAction" ALTER COLUMN "createdAt" DROP DEFAULT,
+ALTER COLUMN "updatedAt" SET DEFAULT CURRENT_TIMESTAMP;
