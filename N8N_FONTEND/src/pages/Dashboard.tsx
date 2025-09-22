@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  Activity, 
-  Clock, 
-  CheckCircle, 
-  XCircle, 
+import {
+  Activity,
+  Clock,
+  CheckCircle,
+  XCircle,
   Plus,
   ArrowRight,
   Workflow,
@@ -16,11 +16,48 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { mockWorkspaceStats, mockWorkflows, mockExecutions } from '@/lib/mockData';
 import { cn } from '@/lib/utils';
+import { useWorkflow } from '@/contexts/WorkFlowContext';
+import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
+interface responce {
+  data:any,
+  message:String,
+  success:Boolean
+}
+
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+  const totalWorkflow = "totalWorkflow"
   const stats = mockWorkspaceStats;
   const recentWorkflows = mockWorkflows.slice(0, 3);
   const recentExecutions = mockExecutions.slice(0, 5);
+  const [curentWorkFlow, setWorkFlow] = useState({});
+  const { getWorkFlow ,createWorkFlow } = useWorkflow()
+  const { toast } = useToast();
+  useEffect(() => {
+
+    ; ((async () => {
+      try {
+        const data = await getWorkFlow();
+        const datas = await localStorage.getItem(totalWorkflow)
+        console.log("size of data ,", JSON.parse(datas).length)
+        setWorkFlow(JSON.parse(datas))
+        console.log("total work flow  ", curentWorkFlow, "data ", data);
+
+        toast({
+          title: 'Success',
+          description: 'successfully',
+        });
+      } catch (error) {
+        console.log(error);
+
+      }
+    }))()
+
+    return () => { }
+  }, [])
+
 
   const formatDuration = (seconds: number) => {
     if (seconds < 60) return `${seconds}s`;
@@ -47,6 +84,27 @@ export default function Dashboard() {
       default: return 'bg-n8n-sidebar text-n8n-sidebar-foreground';
     }
   };
+
+
+
+  const createNewWorkflow = async () => {
+    try {
+      const request: responce = await createWorkFlow();
+      console.log("this is your work flow", request);
+      if (request?.success == true) {
+
+        console.log("data are come")
+        navigate("/workflows/editor")
+      }
+    } catch (error) {
+      toast({
+        title: "error  workflow creating time ",
+        description: error
+      })
+
+    }
+  }
+
 
   return (
     <div className="p-6 space-y-6 bg-n8n-canvas min-h-full">
@@ -144,7 +202,7 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            {recentWorkflows.map((workflow) => (
+            {JSON.parse(localStorage.getItem(totalWorkflow)).map((workflow) => (
               <div key={workflow.id} className="flex items-center justify-between p-3 rounded-lg bg-n8n-header">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-n8n-node-bg rounded-lg flex items-center justify-center">
@@ -187,9 +245,9 @@ export default function Dashboard() {
                     <div className={cn(
                       'w-2 h-2 rounded-full',
                       execution.status === 'success' ? 'bg-n8n-success' :
-                      execution.status === 'error' ? 'bg-n8n-error' :
-                      execution.status === 'running' ? 'bg-n8n-warning animate-pulse' :
-                      'bg-n8n-sidebar'
+                        execution.status === 'error' ? 'bg-n8n-error' :
+                          execution.status === 'running' ? 'bg-n8n-warning animate-pulse' :
+                            'bg-n8n-sidebar'
                     )} />
                     <div>
                       <div className="font-medium text-n8n-sidebar-foreground">

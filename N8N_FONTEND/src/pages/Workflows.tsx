@@ -35,11 +35,30 @@ import { mockWorkflows } from '@/lib/mockData';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
+import { useWorkflow } from '@/contexts/WorkFlowContext';
+import { useNavigate } from 'react-router-dom';
+
+interface responce {
+  data:any,
+  message:String,
+  success:Boolean
+}
+
+/*
+
+
+
+
+*/
 export default function Workflows() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState('updated');
   const { toast } = useToast();
+  const totalWorkflow = "totalWorkflow"
+  const {createWorkFlow}  = useWorkflow();
+  const navigate = useNavigate();
+  
 
   const filteredWorkflows = mockWorkflows
     .filter(workflow => {
@@ -85,6 +104,26 @@ export default function Workflows() {
     });
   };
 
+
+  const createNewWorkflow = async()=>{
+    try{
+      const request :responce   = await createWorkFlow();
+      console.log("this is your work flow" ,request);
+      if(request?.success == true ){
+
+        console.log("data are come")
+        navigate("/workflows/editor")
+      }
+    }catch(error){
+      toast({
+        title :"error  workflow creating time ",
+        description:error
+      })
+
+    }
+  }
+
+
   return (
     <div className="p-6 space-y-6 bg-n8n-canvas min-h-full">
       {/* Header */}
@@ -95,12 +134,12 @@ export default function Workflows() {
             Manage and monitor your automation workflows
           </p>
         </div>
-        <Link to="/workflows/editor">
-          <Button className="bg-primary hover:bg-primary/90">
+        
+          <Button onClick={createNewWorkflow} className="bg-primary hover:bg-primary/90">
             <Plus className="h-4 w-4 mr-2" />
             Create  Workflow
           </Button>
-        </Link>
+        
       </div>
 
       {/* Filters and Search */}
@@ -145,7 +184,7 @@ export default function Workflows() {
 
       {/* Workflows List */}
       <div className="grid gap-4">
-        {filteredWorkflows.map((workflow) => (
+        {JSON.parse(localStorage.getItem(totalWorkflow)).map((workflow) => (
           <Card key={workflow.id} className="bg-n8n-sidebar border-n8n-node-border hover:border-n8n-node-border/80 transition-colors">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
@@ -157,16 +196,16 @@ export default function Workflows() {
                     >
                       {workflow.name}
                     </Link>
-                    <Badge className={cn('text-xs', getStatusColor(workflow.status))}>
-                      {workflow.status}
+                    <Badge className={cn('text-xs', getStatusColor(workflow.status|| "success"))}>
+                      {workflow.createAt || "success" }
                     </Badge>
                   </div>
                   
                   {workflow.description && (
-                    <p className="text-n8n-sidebar-foreground/70">{workflow.description}</p>
+                    <p className="text-n8n-sidebar-foreground/70">{workflow.createAt }</p>
                   )}
                   
-                  <div className="flex flex-wrap items-center gap-4 text-sm text-n8n-sidebar-foreground/60">
+                  {/* <div className="flex flex-wrap items-center gap-4 text-sm text-n8n-sidebar-foreground/60">
                     <div className="flex items-center gap-1">
                       <Calendar className="h-4 w-4" />
                       <span>Updated {formatDate(workflow.updatedAt)}</span>
@@ -193,7 +232,7 @@ export default function Workflows() {
                         {tag}
                       </Badge>
                     ))}
-                  </div>
+                  </div> */}
                 </div>
                 
                 <div className="flex items-center gap-2 ml-4">

@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 const AUTH_KEY = 'auth_token';
 const USER_KEY = 'user_info';
 const WORKFLOW_ID = "work_flow_id";
+const totalWorkflow = "totalWorkflow"
 
 export interface StapeDataType {
     name: String,
@@ -23,8 +24,7 @@ export class WorkFlowService {
     static createWorkFlow(): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {
-                const { user } = useAuth();
-                const email = user?.email
+               const email = localStorage.getItem("email");
                 if (!email) {
                     return reject("email not found")
                 }
@@ -37,8 +37,9 @@ export class WorkFlowService {
                     },
                 })
                 localStorage.setItem(WORKFLOW_ID, `${responce.data.data.id}`);
+                
                 if (responce.data.success == true) {
-                    resolve(responce.data.payload);
+                    resolve(responce.data);
                 } else {
                     reject(responce.data)
                 }
@@ -49,10 +50,15 @@ export class WorkFlowService {
     }
     static getWorkFlow(): Promise<void> {
         return new Promise(async (resolve, reject) => {
+
+
             try {
-                const { user } = useAuth();
-                const email = user?.email
+               
+                const email = localStorage.getItem("email");
+                
                 if (!email) return reject("email not found");
+
+                
 
 
                 const responce: any = await axios.post(`${import.meta.env.VITE_WORKFLOW_BACKEND}/getAllworkFlow`, {
@@ -62,6 +68,8 @@ export class WorkFlowService {
                         "Content-Type": "application/json",
                     },
                 })
+
+                localStorage.setItem(totalWorkflow,JSON.stringify(responce.data.data));
 
                 if (responce.data.success) {
                     resolve(responce.data.data);
