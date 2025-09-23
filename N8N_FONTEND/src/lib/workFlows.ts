@@ -21,6 +21,9 @@ export interface StapeDataType {
 
 
 export class WorkFlowService {
+    static createSteps(data: StapeDataType) {
+        throw new Error('Method not implemented.');
+    }
     static createWorkFlow(): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {

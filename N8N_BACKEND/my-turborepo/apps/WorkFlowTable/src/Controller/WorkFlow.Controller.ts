@@ -1,10 +1,12 @@
 import { Prisma } from '@prisma/client/extension';
 import { PrismaClient } from '../../../DataBase/generated/prisma/index.js'
 import type { Request, Response } from 'express'
+import { config } from 'dotenv';
 
 const prisma = new PrismaClient();
 
 
+config();
 
 export const createWorkFlow = async (req: Request, res: Response) => {
     try {
@@ -134,13 +136,21 @@ export const getAllWorkFlow = async (req: Request, res: Response) => {
 
 export const createStaps = async (req: Request, res: Response) => {
     try {
-        const { name, email, index, type, app, metadata, workflowId } = req.body;
-        if (!name || !email || !index || !type || !app || !metadata || !workflowId) {
+        const { email, workflowId, batchOfdata } = req.body;
+        if (!email || !workflowId) {
             return res.status(400).json({
                 success: false,
                 message: "full fill  all required filed"
             })
 
+        }
+
+        if (batchOfdata.length == 0) {
+            return res.status(400).json({
+                success: false,
+                message: "invalid data"
+
+            })
         }
 
 
@@ -153,7 +163,7 @@ export const createStaps = async (req: Request, res: Response) => {
             }
 
         })
-     
+
 
         if (!findUserAreExitOrNot) {
             return res.status(400).json({
@@ -164,14 +174,14 @@ export const createStaps = async (req: Request, res: Response) => {
 
         }
 
-        
+
         const findWorkFlowAreExitOrNot = await prisma.WorkFlow.findUnique({
             where: {
                 id: workflowId
             }
         })
 
-       
+
         if (!findWorkFlowAreExitOrNot) {
             return res.status(400).json({
                 success: false,
@@ -180,33 +190,43 @@ export const createStaps = async (req: Request, res: Response) => {
             })
 
         }
-        
-
-        if(app == "WebHook"){
-            metadata.URL = `${process.env.WEB_HOOK_URL}/${findUserAreExitOrNot.id}/${findWorkFlowAreExitOrNot.id}`
-        }
 
 
-        const StoreData = await prisma.Staps.create({
-            data: {
-                name: name,
-                userId: findUserAreExitOrNot.id,
-                index: parseInt(index),
-                type: type,
-                app: app,
-                metadata: metadata,
-                createdAt: new Date(),
-                workflowId: findWorkFlowAreExitOrNot.id,
 
+
+
+        batchOfdata.map((_stapes: any) => {
+            if (_stapes.app == "WebHook") {
+                _stapes.metadata.URL = `${process.env.WEB_HOOK_URL}/${findUserAreExitOrNot.id}/${findWorkFlowAreExitOrNot.id}`
             }
+            
+            _stapes.userId =findUserAreExitOrNot.id;
+            _stapes.createdAt = new Date();
+            _stapes.workflowId = findWorkFlowAreExitOrNot.id
+
         })
 
+        
+        console.log(batchOfdata);
+        const StoreData = await prisma.Staps.createMany({
+            data: batchOfdata
+        })
+       
 
-      
+        /**
+         *            name: name,
+                   userId: findUserAreExitOrNot.id,
+                   index: parseInt(index),
+                   type: type,
+                   app: app,
+                    metadata: metadata,
+                  createdAt: new Date(),
+                  workflowId: findWorkFlowAreExitOrNot.id,
+         */
         return res.status(200).json({
             success: true,
             message: "your staps are create",
-            data: StoreData.name
+            // data: StoreData.name
 
         })
 
@@ -222,15 +242,7 @@ export const createStaps = async (req: Request, res: Response) => {
 }
 
 
-// export const userTotalActivity = async (req :Request, res:Response)=>{
-//     try{
 
-
-
-//     }catch(error){
-
-//     }
-// }
 
 export const HookCall = async (req: Request, res: Response) => {
     try {

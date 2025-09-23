@@ -1,13 +1,14 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  Save, 
-  Play, 
-  ArrowLeft, 
+import {
+  Save,
+  Play,
+  ArrowLeft,
   Share2,
   Plus,
   Settings,
   Trash2
+
 } from 'lucide-react';
 import ReactFlow, {
   Node,
@@ -33,6 +34,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import CustomNode from '@/components/workflow/CustomNode';
 import NodePalette from '@/components/workflow/NodePalette';
+import axios from 'axios';
 
 const nodeTypes = {
   custom: CustomNode,
@@ -47,45 +49,41 @@ function WorkflowEditor() {
   const { toast } = useToast();
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
-  
+  const [telegramData, setTelegramData] = useState({
+    chatId: "",
+    token: ""
+  })
+  const [emailData, setEmailData] = useState({
+    email: "",
+    appPassword: "",
+    message: ""
+  })
+  const [HTTP_Method, setHttpMethod] = useState("POST");
+
   const [workflowName, setWorkflowName] = useState(
     id ? mockWorkflows.find(w => w.id === id)?.name || 'Untitled Workflow' : 'New Workflow'
   );
 
   const initialNodes: Node[] = [
-    // {
-    //   id: '1',
-    //   type: 'custom',
-    //   position: { x: 200, y: 200 },
-    //   data: { name: 'Webhook', type: 'webhook' },
-    // },
-    // {
-    //   id: '2',
-    //   type: 'custom',
-    //   position: { x: 500, y: 200 },
-    //   data: { name: 'Send Email', type: 'email' },
-    // },
+
   ];
 
   const initialEdges: Edge[] = [
-    {
-      id: 'e1-2',
-      source: '1',
-      target: '2',
-      type: 'default',
-      style: { stroke: 'hsl(var(--workflow-connection))' },
-    },
+
   ];
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
 
+
+
   const onConnect = useCallback((params: Connection) => {
     setEdges((eds) => addEdge({
       ...params,
       style: { stroke: 'hsl(var(--workflow-connection))' },
     }, eds));
+
   }, [setEdges]);
 
   const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
@@ -118,9 +116,10 @@ function WorkflowEditor() {
         id: getId(),
         type: 'custom',
         position,
-        data: { 
-          name: nodeTypeData?.name || 'New Node', 
-          type: type 
+        data: {
+          name: nodeTypeData?.name || 'New Node',
+          category: nodeTypeData?.category || "New catagory",
+          type: type
         },
       };
 
@@ -134,12 +133,7 @@ function WorkflowEditor() {
     event.dataTransfer.effectAllowed = 'move';
   };
 
-  const handleSave = () => {
-    toast({
-      title: 'Workflow Saved',
-      description: `"${workflowName}" has been saved successfully.`,
-    });
-  };
+
 
   const handleExecute = () => {
     toast({
@@ -174,8 +168,132 @@ function WorkflowEditor() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [selectedNode, handleDeleteNode]);
 
+
+
+
+  // save data (api request for backend)
+  const handleSave = async() => {
+
+    const USER_KEY = 'user_info';
+    const WORKFLOW_ID = "work_flow_id";
+    const userObj = JSON.parse(localStorage.getItem(USER_KEY));
+    const workflowId = JSON.parse(localStorage.getItem(WORKFLOW_ID));
+
+
+
+    const createArray = []
+
+
+
+    nodes.map((data, index) => {
+      if (data.data.name == 'WebHook') {
+        const Obj = {
+          name: data.data.type,
+          index: index,
+          type: data.data.category.toUpperCase(),
+          app: data.data.type,
+          metadata: {
+            HTTP_Method: HTTP_Method
+          },
+
+        }
+        createArray.push(Obj);
+      } else if (data.data.name == 'Send Email') {
+        const Obj = {
+          name: "GMAIL",
+          index: index,
+          type: data.data.category.toUpperCase(),
+          app: "GMAIL",
+          metadata: emailData,
+
+        }
+        createArray.push(Obj);
+      } else if (data.data.name == 'Telegram') {
+        const Obj = {
+          name: "TELEGRAM",
+          index: index,
+          type: data.data.category.toUpperCase(),
+          app: "TELEGRAM",
+          metadata: telegramData,
+
+        }
+        createArray.push(Obj);
+      }
+
+    })
+
+   
+
+
+
+    try {
+
+      const responce: any = await axios.post(`${import.meta.env.VITE_WORKFLOW_BACKEND}/createSteps`, {
+          email:userObj.email, 
+          workflowId:workflowId, 
+          batchOfdata:createArray
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+
+      if (responce.data.success == true) {
+        toast({
+          title: ' Workflow Saved ',
+          description: `"${workflowName}" success fully save workflow.`,
+        });
+      }
+      console.log(responce);
+
+    } catch (error) {
+      toast({
+        title: ' Workflow Saved failed',
+        description: `"${workflowName}" has been saved failed.`,
+      });
+
+    }
+
+
+  };
+
+
+
+
+
+  //save telegram Data 
+
+  const OnchangeHandelerTelegram = (event) => {
+    const { name, value } = event.target
+    setTelegramData({
+      ...telegramData, [name]: value
+    })
+
+  }
+  const TelegramData = async () => {
+    console.log(telegramData)
+  }
+
+  // save email data
+  const OnchangeHandelerEmail = (event) => {
+    const { name, value } = event.target
+    setEmailData({
+      ...emailData, [name]: value
+    })
+
+  }
+  const emailDatas = async () => {
+    console.log(emailData)
+
+  }
+
+  // save webhook data
+  const webhookData = async () => {
+    console.log(HTTP_Method);
+  }
+
   return (
-    <div className="flex h-screen bg-n8n-canvas">
+    <div className="flex h-screen bg-n8n-canvas ">
       {/* Left Sidebar - Node Palette */}
       <div className="w-80 bg-n8n-sidebar border-r border-n8n-node-border flex flex-col">
         <div className="p-4 border-b border-n8n-node-border">
@@ -192,7 +310,9 @@ function WorkflowEditor() {
           </div>
           <Input
             value={workflowName}
-            onChange={(e) => setWorkflowName(e.target.value)}
+            onChange={(e) =>
+              setWorkflowName(e.target.value)
+            }
             className="bg-n8n-header border-n8n-node-border text-n8n-sidebar-foreground font-medium"
           />
         </div>
@@ -252,7 +372,7 @@ function WorkflowEditor() {
         </div>
 
         {/* Canvas Area */}
-        <div className="flex-1 relative overflow-hidden workflow-canvas" ref={reactFlowWrapper}>
+        <div className="flex-1 relative overflow-hidden bg-[#070042]  workflow-canvas" ref={reactFlowWrapper}>
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -267,20 +387,20 @@ function WorkflowEditor() {
             fitView
             className="bg-n8n-canvas"
           >
-            <Controls 
+            <Controls
               className="bg-n8n-sidebar border border-n8n-node-border rounded-lg"
               showInteractive={false}
             />
-            <MiniMap 
+            <MiniMap
               className="!bg-n8n-sidebar border border-n8n-node-border rounded-lg"
               nodeColor={(node) => {
                 const nodeType = mockNodeTypes.find(nt => nt.id === node.data.type);
                 return nodeType?.color || 'hsl(var(--primary))';
               }}
             />
-            <Background 
-              variant={BackgroundVariant.Dots} 
-              gap={20} 
+            <Background
+              variant={BackgroundVariant.Dots}
+              gap={20}
               size={1}
               color="hsl(var(--n8n-node-border))"
             />
@@ -315,7 +435,7 @@ function WorkflowEditor() {
                 <TabsContent value="parameters" className="space-y-4 mt-4">
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium text-n8n-sidebar-foreground mb-2">
+                      {/* <label className="block text-sm font-medium text-n8n-sidebar-foreground mb-2">
                         Credential to connect with
                       </label>
                       <select className="w-full p-2 bg-n8n-header border border-n8n-node-border rounded text-n8n-sidebar-foreground">
@@ -338,35 +458,137 @@ function WorkflowEditor() {
                       </label>
                       <select className="w-full p-2 bg-n8n-header border border-n8n-node-border rounded text-n8n-sidebar-foreground">
                         <option>Send</option>
-                      </select>
+                      </select>*/}
                     </div>
 
                     {selectedNode.data.type === 'email' && (
                       <>
                         <div>
                           <label className="block text-sm font-medium text-n8n-sidebar-foreground mb-2">
-                            To
+                            email
                           </label>
                           <Input
                             placeholder="info@example.com"
+                            onChange={OnchangeHandelerEmail}
+                            name="email"
                             className="bg-n8n-header border-n8n-node-border text-n8n-sidebar-foreground"
+                          />
+                        </div>
+
+
+                        <div>
+                          <label className="block text-sm font-medium text-n8n-sidebar-foreground mb-2">
+                            app Password
+                          </label>
+                          <Input
+                            placeholder="djsv kasj wyet pqwo"
+                            name="appPassword"
+                            onChange={OnchangeHandelerEmail}
+                            className="bg-n8n-header border-n8n-node-border text-n8n-sidebar-foreground"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-n8n-sidebar-foreground mb-2">
+                            message
+                          </label>
+                          <textarea
+                            placeholder="whats app"
+                            name='message'
+                            rows={5}
+                            cols={30}
+                            onChange={OnchangeHandelerEmail}
+
+                            className="bg-n8n-header border-n8n-node-border text-n8n-sidebar-foreground"
+                          ></textarea>
+                        </div>
+
+
+                        <div className="pt-4 border-t  border-n8n-node-border">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={emailDatas}
+                            // onClick={}   // <-- ADDED handler
+                            className="w-full border-white text-green-100 bg-[#262e2b]  hover:bg-green-500/20"
+                          >
+                            <Save className="h-4 w-4 mr-2" />
+                            save
+                          </Button>
+                        </div>
+                      </>
+                    )}
+                    {selectedNode.data.type === 'telegram' && (
+                      <>
+
+
+                        <div>
+                          <label className="block text-sm font-medium text-n8n-sidebar-foreground mb-2">
+                            Token
+                          </label>
+                          <Input
+                            placeholder="telegram token "
+                            className="bg-n8n-header border-n8n-node-border text-n8n-sidebar-foreground"
+                            name="token"
+
+                            onChange={OnchangeHandelerTelegram}
                           />
                         </div>
 
                         <div>
                           <label className="block text-sm font-medium text-n8n-sidebar-foreground mb-2">
-                            Subject
+                            Chat Id
                           </label>
                           <Input
-                            placeholder="Hello World!"
+                            placeholder="  telegram chat  id "
+                            onChange={OnchangeHandelerTelegram}
+                            name="chatId"
                             className="bg-n8n-header border-n8n-node-border text-n8n-sidebar-foreground"
                           />
+                        </div>
+                        <div className="pt-4 border-t  border-n8n-node-border">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={TelegramData}
+                            // onClick={}   // <-- ADDED handler
+                            className="w-full border-white text-green-100 bg-[#262e2b]  hover:bg-green-500/20"
+                          >
+                            <Save className="h-4 w-4 mr-2" />
+                            save
+                          </Button>
+                        </div>
+
+
+                      </>
+                    )}
+
+                    {selectedNode.data.type === 'WebHook' && (
+                      <>
+                        <div>
+                          <label className="block text-sm font-medium text-n8n-sidebar-foreground mb-2">
+                            HTTP_Method
+                          </label>
+                          <select onChange={(e) => setHttpMethod(e.target.value)} className="w-full p-2 bg-n8n-header border border-n8n-node-border rounded text-n8n-sidebar-foreground">
+                            <option>POST</option>
+                          </select>
+                        </div>
+                        <div className="pt-4 border-t  border-n8n-node-border">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={webhookData}
+                            // onClick={}   // <-- ADDED handler
+                            className="w-full border-white text-green-100 bg-[#262e2b]  hover:bg-green-500/20"
+                          >
+                            <Save className="h-4 w-4 mr-2" />
+                            save
+                          </Button>
                         </div>
                       </>
                     )}
                   </div>
 
-                  <Card className="bg-n8n-header border-n8n-node-border">
+                  {/* <Card className="bg-n8n-header border-n8n-node-border">
                     <CardHeader className="pb-3">
                       <CardTitle className="text-sm text-n8n-sidebar-foreground">Options</CardTitle>
                     </CardHeader>
@@ -380,7 +602,7 @@ function WorkflowEditor() {
                         Add option
                       </Button>
                     </CardContent>
-                  </Card>
+                  </Card> */}
                 </TabsContent>
 
                 <TabsContent value="settings" className="space-y-4 mt-4">

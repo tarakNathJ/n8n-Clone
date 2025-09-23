@@ -7,7 +7,7 @@ interface WorkflowContextTypeinterface {
     isLoading: boolean;
     createWorkFlow: () => Promise<any>;
     getWorkFlow: () => Promise<any>;
-    CreateStapes: (data: StapeDataType) =>Promise<void>;
+    createStapes: (data: StapeDataType) =>Promise<void>;
 }
 
 const WorkflowContext = createContext<WorkflowContextTypeinterface | undefined>(undefined);
@@ -50,7 +50,7 @@ export function WorkflowProvider({ children }: workflowProviderProps) {
         }
     }
 
-    const CreateStapes = async (data:StapeDataType) => {
+    const createStapes = async (data: StapeDataType) => {
 
         setIsLoading(true);
         try {
@@ -61,7 +61,7 @@ export function WorkflowProvider({ children }: workflowProviderProps) {
     }
 
     return (
-        <WorkflowContext.Provider value={{ isLoading ,createWorkFlow , getWorkFlow ,CreateStapes }} >
+        <WorkflowContext.Provider value={{ isLoading ,createWorkFlow , getWorkFlow ,createStapes }} >
             {children}
         </WorkflowContext.Provider>
 

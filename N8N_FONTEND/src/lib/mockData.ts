@@ -213,8 +213,8 @@ export interface NodeType {
 
 export const mockNodeTypes: NodeType[] = [
   {
-    id: 'webhook',
-    name: 'Webhook',
+    id: 'WebHook',
+    name: 'WebHook',
     icon: '🔗',
     category: 'trigger',
     color: 'hsl(var(--n8n-primary))',
