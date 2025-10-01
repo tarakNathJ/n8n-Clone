@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    // File Layout
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    // Environment Settings
+    "module": "NodeNext",         // ✅ correct casing
+    "target": "ES2020",           // safer for Node 16/18/20
+    "moduleResolution": "NodeNext",
+    "lib": ["ESNext"],            // ✅ ensures latest JS features
+    "types": ["node"],            // ✅ fixes 'global' and 'process'
+
+    // Other Outputs
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    // Stricter Typechecking Options
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    // Recommended Options
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // Module / Import style
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "moduleDetection": "force"
+  },
+  "include": ["src", "prisma"],
+  "exclude": ["node_modules", "dist"]
+}

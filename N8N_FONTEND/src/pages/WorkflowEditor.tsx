@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useCallback, useRef, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Save,
   Play,
@@ -7,9 +7,8 @@ import {
   Share2,
   Plus,
   Settings,
-  Trash2
-
-} from 'lucide-react';
+  Trash2,
+} from "lucide-react";
 import ReactFlow, {
   Node,
   Edge,
@@ -22,19 +21,25 @@ import ReactFlow, {
   Background,
   BackgroundVariant,
   ReactFlowProvider,
-} from 'reactflow';
-import 'reactflow/dist/style.css';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { mockNodeTypes, mockWorkflows } from '@/lib/mockData';
-import { cn } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast';
-import CustomNode from '@/components/workflow/CustomNode';
-import NodePalette from '@/components/workflow/NodePalette';
-import axios from 'axios';
+} from "reactflow";
+import "reactflow/dist/style.css";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { mockNodeTypes, mockWorkflows } from "@/lib/mockData";
+import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import CustomNode from "@/components/workflow/CustomNode";
+import NodePalette from "@/components/workflow/NodePalette";
+import axios from "axios";
 
 const nodeTypes = {
   custom: CustomNode,
@@ -51,40 +56,43 @@ function WorkflowEditor() {
   const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
   const [telegramData, setTelegramData] = useState({
     chatId: "",
-    token: ""
-  })
+    token: "",
+  });
   const [emailData, setEmailData] = useState({
     email: "",
     appPassword: "",
-    message: ""
-  })
+    message: "",
+  });
   const [HTTP_Method, setHttpMethod] = useState("POST");
 
   const [workflowName, setWorkflowName] = useState(
-    id ? mockWorkflows.find(w => w.id === id)?.name || 'Untitled Workflow' : 'New Workflow'
+    id
+      ? mockWorkflows.find((w) => w.id === id)?.name || "Untitled Workflow"
+      : "New Workflow"
   );
 
-  const initialNodes: Node[] = [
+  const initialNodes: Node[] = [];
 
-  ];
-
-  const initialEdges: Edge[] = [
-
-  ];
+  const initialEdges: Edge[] = [];
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
 
-
-
-  const onConnect = useCallback((params: Connection) => {
-    setEdges((eds) => addEdge({
-      ...params,
-      style: { stroke: 'hsl(var(--workflow-connection))' },
-    }, eds));
-
-  }, [setEdges]);
+  const onConnect = useCallback(
+    (params: Connection) => {
+      setEdges((eds) =>
+        addEdge(
+          {
+            ...params,
+            style: { stroke: "hsl(var(--workflow-connection))" },
+          },
+          eds
+        )
+      );
+    },
+    [setEdges]
+  );
 
   const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
     setSelectedNode(node);
@@ -92,7 +100,7 @@ function WorkflowEditor() {
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
+    event.dataTransfer.dropEffect = "move";
   }, []);
 
   const onDrop = useCallback(
@@ -100,26 +108,24 @@ function WorkflowEditor() {
       event.preventDefault();
 
       const reactFlowBounds = reactFlowWrapper.current?.getBoundingClientRect();
-      const type = event.dataTransfer.getData('application/reactflow');
+      const type = event.dataTransfer.getData("application/reactflow");
 
-      if (typeof type === 'undefined' || !type || !reactFlowBounds) {
-        return;
-      }
+      if (typeof type === "undefined" || !type || !reactFlowBounds) return;
 
       const position = reactFlowInstance?.project({
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
       });
 
-      const nodeTypeData = mockNodeTypes.find(nt => nt.id === type);
+      const nodeTypeData = mockNodeTypes.find((nt) => nt.id === type);
       const newNode: Node = {
         id: getId(),
-        type: 'custom',
+        type: "custom",
         position,
         data: {
-          name: nodeTypeData?.name || 'New Node',
+          name: nodeTypeData?.name || "New Node",
           category: nodeTypeData?.category || "New catagory",
-          type: type
+          type: type,
         },
       };
 
@@ -129,15 +135,13 @@ function WorkflowEditor() {
   );
 
   const onNodeDragStart = (event: React.DragEvent, nodeType: string) => {
-    event.dataTransfer.setData('application/reactflow', nodeType);
-    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData("application/reactflow", nodeType);
+    event.dataTransfer.effectAllowed = "move";
   };
-
-
 
   const handleExecute = () => {
     toast({
-      title: 'Workflow Executed',
+      title: "Workflow Executed",
       description: `"${workflowName}" is now running.`,
     });
   };
@@ -147,150 +151,132 @@ function WorkflowEditor() {
     if (!selectedNode) return;
 
     setNodes((nds) => nds.filter((n) => n.id !== selectedNode.id));
-    setEdges((eds) => eds.filter((e) => e.source !== selectedNode.id && e.target !== selectedNode.id));
+    setEdges((eds) =>
+      eds.filter(
+        (e) => e.source !== selectedNode.id && e.target !== selectedNode.id
+      )
+    );
     setSelectedNode(null);
 
     toast({
-      title: 'Node Deleted',
+      title: "Node Deleted",
       description: `"${selectedNode.data.name}" was removed from the workflow.`,
-      variant: 'destructive',
+      variant: "destructive",
     });
   }, [selectedNode, setNodes, setEdges, setSelectedNode, toast]);
 
   // --- ADDED: keyboard support (Delete / Backspace)
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if ((e.key === 'Delete' || e.key === 'Backspace') && selectedNode) {
+      if ((e.key === "Delete" || e.key === "Backspace") && selectedNode) {
         handleDeleteNode();
       }
     };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
   }, [selectedNode, handleDeleteNode]);
 
-
-
-
   // save data (api request for backend)
-  const handleSave = async() => {
-
-    const USER_KEY = 'user_info';
+  const handleSave = async () => {
+    const USER_KEY = "user_info";
     const WORKFLOW_ID = "work_flow_id";
     const userObj = JSON.parse(localStorage.getItem(USER_KEY));
     const workflowId = JSON.parse(localStorage.getItem(WORKFLOW_ID));
 
-
-
-    const createArray = []
-
-
+    const createArray = [];
 
     nodes.map((data, index) => {
-      if (data.data.name == 'WebHook') {
+      if (data.data.name == "WebHook") {
         const Obj = {
           name: data.data.type,
           index: index,
           type: data.data.category.toUpperCase(),
           app: data.data.type,
           metadata: {
-            HTTP_Method: HTTP_Method
+            HTTP_Method: HTTP_Method,
           },
-
-        }
+        };
         createArray.push(Obj);
-      } else if (data.data.name == 'Send Email') {
+      } else if (data.data.name == "Send Email") {
         const Obj = {
           name: "GMAIL",
           index: index,
           type: data.data.category.toUpperCase(),
           app: "GMAIL",
           metadata: emailData,
-
-        }
+        };
         createArray.push(Obj);
-      } else if (data.data.name == 'Telegram') {
+      } else if (data.data.name == "Telegram") {
         const Obj = {
           name: "TELEGRAM",
           index: index,
           type: data.data.category.toUpperCase(),
           app: "TELEGRAM",
           metadata: telegramData,
-
-        }
+        };
         createArray.push(Obj);
       }
-
-    })
-
-   
-
-
+    });
 
     try {
-
-      const responce: any = await axios.post(`${import.meta.env.VITE_WORKFLOW_BACKEND}/createSteps`, {
-          email:userObj.email, 
-          workflowId:workflowId, 
-          batchOfdata:createArray
-      }, {
-        headers: {
-          "Content-Type": "application/json",
+      const responce: any = await axios.post(
+        `${import.meta.env.VITE_WORKFLOW_BACKEND}/createSteps`,
+        {
+          email: userObj.email,
+          workflowId: workflowId,
+          batchOfdata: createArray,
         },
-      })
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (responce.data.success == true) {
         toast({
-          title: ' Workflow Saved ',
+          title: " Workflow Saved ",
           description: `"${workflowName}" success fully save workflow.`,
         });
       }
       console.log(responce);
-
     } catch (error) {
       toast({
-        title: ' Workflow Saved failed',
+        title: " Workflow Saved failed",
         description: `"${workflowName}" has been saved failed.`,
       });
-
     }
-
-
   };
 
-
-
-
-
-  //save telegram Data 
+  //save telegram Data
 
   const OnchangeHandelerTelegram = (event) => {
-    const { name, value } = event.target
+    const { name, value } = event.target;
     setTelegramData({
-      ...telegramData, [name]: value
-    })
-
-  }
+      ...telegramData,
+      [name]: value,
+    });
+  };
   const TelegramData = async () => {
-    console.log(telegramData)
-  }
+    console.log(telegramData);
+  };
 
   // save email data
   const OnchangeHandelerEmail = (event) => {
-    const { name, value } = event.target
+    const { name, value } = event.target;
     setEmailData({
-      ...emailData, [name]: value
-    })
-
-  }
+      ...emailData,
+      [name]: value,
+    });
+  };
   const emailDatas = async () => {
-    console.log(emailData)
-
-  }
+    console.log(emailData);
+  };
 
   // save webhook data
   const webhookData = async () => {
     console.log(HTTP_Method);
-  }
+  };
 
   return (
     <div className="flex h-screen bg-n8n-canvas ">
@@ -301,18 +287,18 @@ function WorkflowEditor() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/workflows')}
+              onClick={() => navigate("/workflows")}
               className="text-n8n-sidebar-foreground hover:bg-n8n-header"
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <span className="text-sm text-n8n-sidebar-foreground/60">Back to workflows</span>
+            <span className="text-sm text-n8n-sidebar-foreground/60">
+              Back to workflows
+            </span>
           </div>
           <Input
             value={workflowName}
-            onChange={(e) =>
-              setWorkflowName(e.target.value)
-            }
+            onChange={(e) => setWorkflowName(e.target.value)}
             className="bg-n8n-header border-n8n-node-border text-n8n-sidebar-foreground font-medium"
           />
         </div>
@@ -327,15 +313,24 @@ function WorkflowEditor() {
         {/* Canvas Header */}
         <div className="flex items-center justify-between p-4 bg-n8n-header border-b border-n8n-node-border">
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="border-n8n-node-border text-n8n-sidebar-foreground">
+            <Badge
+              variant="outline"
+              className="border-n8n-node-border text-n8n-sidebar-foreground"
+            >
               Inactive
             </Badge>
             <Tabs value="editor" className="w-auto">
               <TabsList className="bg-n8n-sidebar border-n8n-node-border">
-                <TabsTrigger value="editor" className="text-n8n-sidebar-foreground data-[state=active]:bg-n8n-header">
+                <TabsTrigger
+                  value="editor"
+                  className="text-n8n-sidebar-foreground data-[state=active]:bg-n8n-header"
+                >
                   Editor
                 </TabsTrigger>
-                <TabsTrigger value="executions" className="text-n8n-sidebar-foreground data-[state=active]:bg-n8n-header">
+                <TabsTrigger
+                  value="executions"
+                  className="text-n8n-sidebar-foreground data-[state=active]:bg-n8n-header"
+                >
                   Executions
                 </TabsTrigger>
               </TabsList>
@@ -372,7 +367,10 @@ function WorkflowEditor() {
         </div>
 
         {/* Canvas Area */}
-        <div className="flex-1 relative overflow-hidden bg-[#070042]  workflow-canvas" ref={reactFlowWrapper}>
+        <div
+          className="flex-1 relative overflow-hidden bg-[#070042]  workflow-canvas"
+          ref={reactFlowWrapper}
+        >
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -394,8 +392,10 @@ function WorkflowEditor() {
             <MiniMap
               className="!bg-n8n-sidebar border border-n8n-node-border rounded-lg"
               nodeColor={(node) => {
-                const nodeType = mockNodeTypes.find(nt => nt.id === node.data.type);
-                return nodeType?.color || 'hsl(var(--primary))';
+                const nodeType = mockNodeTypes.find(
+                  (nt) => nt.id === node.data.type
+                );
+                return nodeType?.color || "hsl(var(--primary))";
               }}
             />
             <Background
@@ -412,10 +412,12 @@ function WorkflowEditor() {
       <div className="w-80 bg-n8n-sidebar border-l border-n8n-node-border flex flex-col">
         <div className="p-4 border-b border-n8n-node-border">
           <h3 className="font-semibold text-n8n-sidebar-foreground">
-            {selectedNode ? selectedNode.data.name : 'No node selected'}
+            {selectedNode ? selectedNode.data.name : "No node selected"}
           </h3>
           <p className="text-sm text-n8n-sidebar-foreground/60 mt-1">
-            {selectedNode ? 'Configure node parameters' : 'Select a node to view configuration'}
+            {selectedNode
+              ? "Configure node parameters"
+              : "Select a node to view configuration"}
           </p>
         </div>
 
@@ -424,10 +426,16 @@ function WorkflowEditor() {
             <div className="space-y-6">
               <Tabs value="parameters" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 bg-n8n-header border-n8n-node-border">
-                  <TabsTrigger value="parameters" className="text-n8n-sidebar-foreground data-[state=active]:bg-n8n-node-bg">
+                  <TabsTrigger
+                    value="parameters"
+                    className="text-n8n-sidebar-foreground data-[state=active]:bg-n8n-node-bg"
+                  >
                     Parameters
                   </TabsTrigger>
-                  <TabsTrigger value="settings" className="text-n8n-sidebar-foreground data-[state=active]:bg-n8n-node-bg">
+                  <TabsTrigger
+                    value="settings"
+                    className="text-n8n-sidebar-foreground data-[state=active]:bg-n8n-node-bg"
+                  >
                     Settings
                   </TabsTrigger>
                 </TabsList>
@@ -461,7 +469,7 @@ function WorkflowEditor() {
                       </select>*/}
                     </div>
 
-                    {selectedNode.data.type === 'email' && (
+                    {selectedNode.data.type === "email" && (
                       <>
                         <div>
                           <label className="block text-sm font-medium text-n8n-sidebar-foreground mb-2">
@@ -474,7 +482,6 @@ function WorkflowEditor() {
                             className="bg-n8n-header border-n8n-node-border text-n8n-sidebar-foreground"
                           />
                         </div>
-
 
                         <div>
                           <label className="block text-sm font-medium text-n8n-sidebar-foreground mb-2">
@@ -493,15 +500,13 @@ function WorkflowEditor() {
                           </label>
                           <textarea
                             placeholder="whats app"
-                            name='message'
+                            name="message"
                             rows={5}
                             cols={30}
                             onChange={OnchangeHandelerEmail}
-
                             className="bg-n8n-header border-n8n-node-border text-n8n-sidebar-foreground"
                           ></textarea>
                         </div>
-
 
                         <div className="pt-4 border-t  border-n8n-node-border">
                           <Button
@@ -517,10 +522,8 @@ function WorkflowEditor() {
                         </div>
                       </>
                     )}
-                    {selectedNode.data.type === 'telegram' && (
+                    {selectedNode.data.type === "telegram" && (
                       <>
-
-
                         <div>
                           <label className="block text-sm font-medium text-n8n-sidebar-foreground mb-2">
                             Token
@@ -529,7 +532,6 @@ function WorkflowEditor() {
                             placeholder="telegram token "
                             className="bg-n8n-header border-n8n-node-border text-n8n-sidebar-foreground"
                             name="token"
-
                             onChange={OnchangeHandelerTelegram}
                           />
                         </div>
@@ -557,18 +559,19 @@ function WorkflowEditor() {
                             save
                           </Button>
                         </div>
-
-
                       </>
                     )}
 
-                    {selectedNode.data.type === 'WebHook' && (
+                    {selectedNode.data.type === "WebHook" && (
                       <>
                         <div>
                           <label className="block text-sm font-medium text-n8n-sidebar-foreground mb-2">
                             HTTP_Method
                           </label>
-                          <select onChange={(e) => setHttpMethod(e.target.value)} className="w-full p-2 bg-n8n-header border border-n8n-node-border rounded text-n8n-sidebar-foreground">
+                          <select
+                            onChange={(e) => setHttpMethod(e.target.value)}
+                            className="w-full p-2 bg-n8n-header border border-n8n-node-border rounded text-n8n-sidebar-foreground"
+                          >
                             <option>POST</option>
                           </select>
                         </div>
@@ -636,7 +639,7 @@ function WorkflowEditor() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={handleDeleteNode}   // <-- ADDED handler
+                  onClick={handleDeleteNode} // <-- ADDED handler
                   className="w-full border-destructive text-destructive hover:bg-destructive/10"
                 >
                   <Trash2 className="h-4 w-4 mr-2" />

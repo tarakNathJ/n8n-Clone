@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AvaliableTriger {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  imageUrl  String
+  metadata  Json     @default("{}")
+  createdAt DateTime
+  updatedAt DateTime @default(now())
+  key       String
+}
+
+model AvliableAction {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  imageUrl  String
+  metadata  Json     @default("{}")
+  createdAt DateTime
+  updatedAt DateTime @default(now())
+  key       String
+}
+
+model StapsRun {
+  id            Int              @id @default(autoincrement())
+  metaData      Json             @default("{}")
+  createdAt     DateTime
+  updatedAt     DateTime         @default(now())
+  WorkFlowId    Int
+  outBoxStapRun OutBoxStapsRun[]
+  workFlow      WorkFlow         @relation(fields: [WorkFlowId], references: [id])
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  name      String
+  email     String     @unique
+  password  String
+  createdAt DateTime
+  updatedAt DateTime?  @default(now())
+  zaps      Staps[]
+  workFlows WorkFlow[]
+}
+
+model OutBoxStapsRun {
+  id         Int      @id @default(autoincrement())
+  StapsRunId Int
+  createdAt  DateTime
+  updatedAt  DateTime @default(now())
+  stapsRun   StapsRun @relation(fields: [StapsRunId], references: [id])
+}
+
+model WorkFlow {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  createAt  DateTime
+  updateAt  DateTime   @default(now())
+  userId    Int
+  Staps     Staps[]
+  stapsRuns StapsRun[]
+  User      User       @relation(fields: [userId], references: [id])
+}
+
+model Staps {
+  id             Int              @id @default(autoincrement())
+  name           String
+  userId         Int?
+  index          Int
+  type           Type
+  app            String
+  metadata       Json             @default("{}")
+  createdAt      DateTime
+  updatedAt      DateTime         @default(now())
+  workflowId     Int
+  StapCondiction StapCondiction[]
+  user           User?            @relation(fields: [userId], references: [id])
+  WorksFlows     WorkFlow         @relation(fields: [workflowId], references: [id])
+}
+
+model StapCondiction {
+  id        Int    @id @default(autoincrement())
+  key       String
+  operation String
+  value     String
+  stepsId   Int
+  staps     Staps  @relation(fields: [stepsId], references: [id])
+}
+
+enum Type {
+  TRIGGER
+  ACTION
+}
