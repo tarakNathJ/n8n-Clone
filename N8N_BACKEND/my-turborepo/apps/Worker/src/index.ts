@@ -1,9 +1,9 @@
 import { Kafka, type Consumer, type Producer } from "kafkajs";
-import { PrismaClient } from '../../DataBase/generated/prisma/index.js'
+import {prisma} from '@myorg/database'
 import { SendEmail } from './apps/Gmail.js';
 import { sendMessageTelegram } from './apps/Telegram.js'
 
-const prisma = new PrismaClient();
+
 const kafka = new Kafka({
     clientId: "newKafka",
     brokers: ["localhost:9092"]

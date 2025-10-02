@@ -1,6 +1,6 @@
-import { PrismaClient } from '../../../DataBase/generated/prisma/index.js'
+
 import type { Request, Response } from "express";
-const prisma = new PrismaClient();
+import { prisma } from "@myorg/database";
 
 
 export const createTrigger = async (req: Request, res: Response) => {

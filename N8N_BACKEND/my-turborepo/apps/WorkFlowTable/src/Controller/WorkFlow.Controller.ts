@@ -1,9 +1,9 @@
-import { Prisma } from '@prisma/client/extension';
-import { PrismaClient } from '../../../DataBase/generated/prisma/index.js'
+import { prisma } from '@myorg/database';
+
 import type { Request, Response } from 'express'
 import { config } from 'dotenv';
 
-const prisma = new PrismaClient();
+
 
 
 config();

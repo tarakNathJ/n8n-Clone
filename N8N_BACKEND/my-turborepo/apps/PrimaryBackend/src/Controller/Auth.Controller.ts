@@ -1,12 +1,11 @@
-import { PrismaClient } from '../../../DataBase/generated/prisma/index.js'
 import type { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import JWT from 'jsonwebtoken'
 import type { SignOptions } from "jsonwebtoken";
 import { allEnvVariable } from "../constance.js"
+import { prisma } from "@myorg/database";
 
 
-const prisma = new PrismaClient();
 export const signUpController = async (req: Request, res: Response) => {
     try {
         const { name, email, password } = req.body;
@@ -162,7 +161,7 @@ export const updatePassword = async (req: Request, res: Response) => {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(newPassword, salt);
 
-        const updatedUser = await prisma.user.update({
+        const updatedUser = await prisma.User.update({
             where: {
                 email: email
             },

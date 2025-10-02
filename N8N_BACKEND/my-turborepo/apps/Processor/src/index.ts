@@ -1,7 +1,7 @@
 import { Kafka } from "kafkajs";
-import { PrismaClient } from '../../DataBase/generated/prisma/index.js'
+import {prisma} from '@myorg/database'
 
-const prisma = new PrismaClient()
+
 
 const kafka = new Kafka({
     clientId: "newKafka",

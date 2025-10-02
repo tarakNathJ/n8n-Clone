@@ -21,3 +21,5 @@ app.use("/api/auth",typesRoute)
 app.listen(process.env.PORT,()=>{
     console.log(`server run at ${process.env.PORT}`)
 })
+
+

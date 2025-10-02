@@ -31,6 +31,7 @@ model AvliableAction {
 model StapsRun {
   id            Int              @id @default(autoincrement())
   metaData      Json             @default("{}")
+  
   createdAt     DateTime
   updatedAt     DateTime         @default(now())
   WorkFlowId    Int
@@ -75,7 +76,9 @@ model Staps {
   index          Int
   type           Type
   app            String
+  typeOfWork     TypeOfWork
   metadata       Json             @default("{}")
+  status        StatusType
   createdAt      DateTime
   updatedAt      DateTime         @default(now())
   workflowId     Int
@@ -96,4 +99,18 @@ model StapCondiction {
 enum Type {
   TRIGGER
   ACTION
+}
+
+enum TypeOfWork {
+  NORMAL
+  AUTOMATIC
+}
+
+
+
+enum StatusType {
+    CREATE 
+    PANDING
+    DONE
+    FAILED
 }

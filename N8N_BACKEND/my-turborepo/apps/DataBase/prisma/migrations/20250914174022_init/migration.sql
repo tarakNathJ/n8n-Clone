@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "public"."AvaliableTriger" ALTER COLUMN "createdAt" DROP DEFAULT,
-ALTER COLUMN "updatedAt" SET DEFAULT CURRENT_TIMESTAMP;
