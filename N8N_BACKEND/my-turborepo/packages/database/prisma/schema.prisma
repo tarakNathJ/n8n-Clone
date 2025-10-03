@@ -29,9 +29,10 @@ model AvliableAction {
 }
 
 model StapsRun {
-  id            Int              @id @default(autoincrement())
-  metaData      Json             @default("{}")
-  
+  id       Int  @id @default(autoincrement())
+  metaData Json @default("{}")
+  Workstatus Workstatus
+
   createdAt     DateTime
   updatedAt     DateTime         @default(now())
   WorkFlowId    Int
@@ -73,12 +74,12 @@ model Staps {
   id             Int              @id @default(autoincrement())
   name           String
   userId         Int?
-  index          Int
+  index          Int         @unique
   type           Type
   app            String
   typeOfWork     TypeOfWork
   metadata       Json             @default("{}")
-  status        StatusType
+  status         StatusType
   createdAt      DateTime
   updatedAt      DateTime         @default(now())
   workflowId     Int
@@ -106,11 +107,14 @@ enum TypeOfWork {
   AUTOMATIC
 }
 
-
-
 enum StatusType {
-    CREATE 
-    PANDING
-    DONE
-    FAILED
+  ACTIVE
+  DEACTIVE
+}
+
+enum Workstatus {
+  CREATE
+  PANDING
+  DONE
+  FAILED
 }
