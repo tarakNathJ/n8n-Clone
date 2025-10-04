@@ -13,12 +13,18 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/mailparser": "^3.4.6",
+    "@types/node-imap": "^0.9.3",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.901.0",
+    "@aws-sdk/s3-request-presigner": "^3.901.0",
     "dotenv": "^17.2.3",
-    "kafkajs": "^2.2.4"
+    "kafkajs": "^2.2.4",
+    "mailparser": "^3.7.4",
+    "node-imap": "^0.9.6"
   }
 }

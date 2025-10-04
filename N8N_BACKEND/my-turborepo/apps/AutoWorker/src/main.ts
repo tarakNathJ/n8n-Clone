@@ -50,7 +50,7 @@ async function StartAutoWorkerFunction() {
         let data: MessageFromProcesser ;
         try {
           data = JSON.parse(message.value?.toString() || "{}");
-          console.log(data);
+          // console.log(data);
         } catch (err) {
           console.error(" JSON parse failed", err);
           return;
