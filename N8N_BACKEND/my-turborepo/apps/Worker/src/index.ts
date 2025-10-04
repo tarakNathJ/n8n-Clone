@@ -157,11 +157,11 @@ async function workExecute() {
                         return
                     }
 
-                    if (FindStaps?.name === "TELEGRAM") {
+                    if (FindStaps?.name.toUpperCase() === "TELEGRAM") {
                         const metadata = FindStaps.metadata as { TOKEN: string; CHAT_ID: string };
                         const ok = await sendMessageTelegram(metadata.TOKEN, metadata.CHAT_ID, JSON.stringify((data as MessageFromWorker).UserMetaData));
                         console.log(ok ? " Telegram sent" : " Telegram failed");
-                    } else if (FindStaps?.name === "GMAIL") {
+                    } else if (FindStaps?.name.toUpperCase() === "GMAIL") {
                         const metadata = FindStaps.metadata as { email: string; password: string };
                         // @ts-ignore
                         const ok = await SendEmail(metadata.email, metadata.password, (data as MessageFromWorker).UserMetaData.email as any | undefined, (data as MessageFromWorker).UserMetaData.message);

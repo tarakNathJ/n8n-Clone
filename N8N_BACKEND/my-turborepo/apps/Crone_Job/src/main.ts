@@ -21,9 +21,10 @@ async function initializeProducer(): Promise<Producer> {
 
 // Run every 10 minutes, all day long
 const task = cron.schedule(
-  "*/10 * * * *",
+  "* * * * *",
   async () => {
     await checkAutoWorker();
+    console.log("call connect");
   },
   { scheduled: false } as any
 );
@@ -32,6 +33,7 @@ async function checkAutoWorker(): Promise<boolean> {
   try {
     // Stop to prevent overlapping jobs
     task.stop();
+    console.log("calling")
 
     const connectProducer = await initializeProducer().catch((error) => {
       console.error("❌ Producer connection failed:", error.message);
@@ -46,10 +48,13 @@ async function checkAutoWorker(): Promise<boolean> {
     const findAutoWorker = await prisma.Staps.findMany({
       where: {
         type: "TRIGGER", // ✅ enum instead of raw string
-        status: "AUTOMATIC"
+        typeOfWork: "AUTOMATIC",
+        status: "ACTIVE"
         
       },
     });
+
+    console.log(findAutoWorker);
 
     for (const data of findAutoWorker) {
       await connectProducer.send({
