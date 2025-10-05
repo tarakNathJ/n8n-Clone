@@ -74,7 +74,7 @@ model Staps {
   id             Int              @id @default(autoincrement())
   name           String
   userId         Int?
-  index          Int         @unique
+  index          Int        
   type           Type
   app            String
   typeOfWork     TypeOfWork

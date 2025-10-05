@@ -119,8 +119,8 @@ async function workExecute() {
                         const ok = await sendMessageTelegram(metadata.TOKEN, metadata.CHAT_ID, JSON.stringify(userData));
                         console.log(ok ? " Telegram sent" : " Telegram failed");
                     } else if (FindStaps?.name === "GMAIL") {
-                        const metadata = FindStaps.metadata as { email: string; password: string };
-                        const ok = await SendEmail(metadata.email, metadata.password, userData.email, userData.message);
+                        const metadata = FindStaps.metadata as { EMAIL: string; PASSWORD: string ; MESSAGE:string };
+                        const ok = await SendEmail(metadata.EMAIL, metadata.PASSWORD, userData.email, metadata.MESSAGE);
                         console.log(ok ? " Email sent" : " Email failed");
                     }
 

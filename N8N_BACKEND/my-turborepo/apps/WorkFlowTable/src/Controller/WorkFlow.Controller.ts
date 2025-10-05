@@ -1,8 +1,8 @@
-import { prisma } from "@myorg/database";
+// import { prisma } from "@myorg/database";
 
 import type { Request, Response } from "express";
 import { config } from "dotenv";
-
+import { prisma } from "@myorg/database";
 config();
 
 export const createWorkFlow = async (req: Request, res: Response) => {
@@ -150,50 +150,51 @@ export const createStaps = async (req: Request, res: Response) => {
       return res.status(400).json({
         success: false,
         message: "this work flow are not exit ",
+        findUserAreExitOrNot
       });
     }
 
-    // batchOfdata.map((_stapes: any) => {
-    //     if (_stapes.app == "WEBHOOK") {
-    //         _stapes.metadata.URL = `${process.env.WEB_HOOK_URL}/${findUserAreExitOrNot.id}/${findWorkFlowAreExitOrNot.id}`
-    //     }
+    batchOfdata.map((_stapes: any) => {
+        if (_stapes.app == "WEBHOOK") {
+            _stapes.metadata.URL = `${process.env.WEB_HOOK_URL}/${findUserAreExitOrNot.id}/${findWorkFlowAreExitOrNot.id}`
+        }
 
-    //     _stapes.userId =findUserAreExitOrNot.id;
-    //     _stapes.createdAt = new Date();
-    //     _stapes.workflowId = findWorkFlowAreExitOrNot.id
+        _stapes.userId =findUserAreExitOrNot.id;
+        _stapes.createdAt = new Date();
+        _stapes.workflowId = findWorkFlowAreExitOrNot.id
 
-    // })
+    })
 
     // console.log(batchOfdata);
-    // const StoreData = await prisma.Staps.createMany({
-    //     data: batchOfdata
-    // })
+    const StoreData = await prisma.Staps.createMany({
+        data: batchOfdata
+    })
 
-    const storeData = await prisma.staps.createMany({
-      data: batchOfdata.map((_stapes: any, idx: number) => ({
-        name: _stapes.name,
-        userId: findUserAreExitOrNot.id,
-        index: parseInt(_stapes.index ?? idx),
-        type: _stapes.type,
-        app: _stapes.app,
-        typeOfWork:_stapes.typeOfWork,
-        metadata: {
-          ..._stapes.metadata,
-          ...(_stapes.app === "WEBHOOK" && {
-            URL: `${process.env.WEB_HOOK_URL}/${findUserAreExitOrNot.id}/${findWorkFlowAreExitOrNot.id}`,
-          }),
-        },
-        status:_stapes.status,
-        createdAt: new Date(),
-        workflowId: findWorkFlowAreExitOrNot.id,
-      })),
-      skipDuplicates: true,
-    });
+    // const storeData = await prisma.staps.createMany({
+    //   data: batchOfdata.map((_stapes: any, idx: number) => ({
+    //     name: _stapes.name,
+    //     userId: findUserAreExitOrNot.id,
+    //     index: parseInt(_stapes.index ?? idx),
+    //     type: _stapes.type,
+    //     app: _stapes.app,
+    //     typeOfWork:_stapes.typeOfWork,
+    //     metadata: {
+    //       ..._stapes.metadata,
+    //       ...(_stapes.app === "WEBHOOK" && {
+    //         URL: `${process.env.WEB_HOOK_URL}/${findUserAreExitOrNot.id}/${findWorkFlowAreExitOrNot.id}`,
+    //       }),
+    //     },
+    //     status:_stapes.status,
+    //     createdAt: new Date(),
+    //     workflowId: findWorkFlowAreExitOrNot.id,
+    //   })),
+    //   skipDuplicates: false,
+    // });
 
     return res.status(200).json({
       success: true,
       message: "your staps are create",
-      // data: StoreData.name
+      data: StoreData
     });
   } catch (error) {
     return res.status(500).json({

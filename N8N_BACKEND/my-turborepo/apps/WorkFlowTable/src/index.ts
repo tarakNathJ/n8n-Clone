@@ -17,6 +17,14 @@ app.use(bodyParser.json());
 
 
 
+app.use("/api",WorkFlowRouter)
+
+
+app.listen(process.env.PORT, () =>
+  console.log(`🚀 Server running on http://localhost:${process.env.PORT} `)
+);
+
+
 // declare module "express-serve-static-core" {
 //   interface Request {
 //     //@ts-ignore
@@ -64,9 +72,3 @@ app.use(bodyParser.json());
 //   res.json({ message: "Data received successfully!", received: req.body });
 // });
 
-app.use("/api",WorkFlowRouter)
-
-
-app.listen(process.env.PORT, () =>
-  console.log(`🚀 Server running on http://localhost:${process.env.PORT} `)
-);

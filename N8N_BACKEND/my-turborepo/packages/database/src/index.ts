@@ -37,4 +37,6 @@ if (process.env.NODE_ENV !== "production") global.prisma = prisma;
 export const  schemaType  : any = {
    TypeOfWork ,StatusType ,Type
 }
+
+
 prisma.OutBoxStapsRun
