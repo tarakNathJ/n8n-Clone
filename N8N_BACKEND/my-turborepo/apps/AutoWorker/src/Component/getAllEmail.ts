@@ -349,11 +349,11 @@ export async function saveToJSON(data: any[]): Promise<string | undefined> {
   return fullPath;
 }
 
+getAllEmailsAndStoreInfile
+
 // ---------- Main Function ----------
 export async function getAllEmailsAndStoreInfile(
-  userPassword: string,
-  userEmail: string
-): Promise<any[]> {
+userPassword: string, userEmail: string, time?: number | boolean): Promise<any[]> {
   const collectedEmails: {
     From: string;
     Subject: string;
@@ -362,6 +362,11 @@ export async function getAllEmailsAndStoreInfile(
   }[] = [];
 
   return new Promise((resolve, reject) => {
+
+    let addTime = 0;
+    if(typeof time !== "boolean"){
+      addTime = time || 0;
+    }
     try {
       const imap = new Imap({
         user: userEmail,
@@ -377,7 +382,7 @@ export async function getAllEmailsAndStoreInfile(
         openInbox(imap, (err) => {
           if (err) return reject(err);
 
-          const sinceDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
+          const sinceDate = new Date(Date.now() -  (24+addTime) * 60 * 60 * 1000);
           const imapDate = sinceDate
             .toLocaleDateString("en-US", {
               day: "2-digit",

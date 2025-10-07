@@ -107,7 +107,11 @@ import { config } from "dotenv";
 import {
   getAllEmailsAndStoreInfile,
   saveToJSON,
-} from "./Component/getAllEmailAndUploadOnCloude.js";
+
+} from "./Component/getAllEmail.js";
+
+import { uploadFileOnAws}  from './Component/UploadFileInS3.js';
+import {checkThisWorkUnder24Hours} from './Component/ChackThisWork.js'
 
 config();
 
@@ -160,8 +164,14 @@ async function StartAutoWorkerFunction() {
         if (!rawMessage) return;
 
         let data: MessageFromProcesser;
+        let time :number | boolean ;
         try {
           data = JSON.parse(rawMessage);
+          //@ts-ignore
+           const status =  await checkThisWorkUnder24Hours(data?.data?.id);
+           if (!status) return 
+          //@ts-ignore
+           time = status;
         } catch (err) {
           console.error("❌ JSON parse failed:", err);
           return;
@@ -177,13 +187,17 @@ async function StartAutoWorkerFunction() {
           console.log("📨 Starting IMAP fetch for:", data?.data?.metadata?.EMAIL);
           const result = await getAllEmailsAndStoreInfile(
             data?.data?.metadata?.PASSWORD,
-            data?.data?.metadata?.EMAIL
+            data?.data?.metadata?.EMAIL,
+            time
           );
 
           if (result && Array.isArray(result)) {
             console.log(`✅ Processed ${result.length} emails for ${data?.data?.metadata?.EMAIL}`);
             const filePath = await saveToJSON(result);
+            if (!filePath) return
             console.log("🗂️ Saved email file:", filePath);
+            const UploadOnAwsS3 = await uploadFileOnAws(filePath,data.data.workflowId,data.data.id);
+            console.log("data upload on aws s3" , UploadOnAwsS3)
           } else {
             console.warn("⚠️ No emails fetched or process failed.");
           }

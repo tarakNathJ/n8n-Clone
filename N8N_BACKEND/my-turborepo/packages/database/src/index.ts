@@ -39,4 +39,3 @@ export const  schemaType  : any = {
 }
 
 
-prisma.OutBoxStapsRun
