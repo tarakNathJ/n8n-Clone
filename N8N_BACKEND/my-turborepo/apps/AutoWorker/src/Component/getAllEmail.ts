@@ -349,7 +349,7 @@ export async function saveToJSON(data: any[]): Promise<string | undefined> {
   return fullPath;
 }
 
-getAllEmailsAndStoreInfile
+
 
 // ---------- Main Function ----------
 export async function getAllEmailsAndStoreInfile(

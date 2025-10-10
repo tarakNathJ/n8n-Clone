@@ -7,8 +7,8 @@ config();
 let producer: Producer | null = null;
 
 const kafka = new Kafka({
-  clientId: "myKafka",
-  brokers: ["localhost:9092"],
+  clientId:process.env.KAFKA_CLIENT_ID || "myKafka",
+  brokers: [process.env.KAFKA_BROKERS_NAME ||"localhost:9092"],
 });
 
 async function initializeProducer(): Promise<Producer> {
@@ -45,7 +45,7 @@ async function checkAutoWorker(): Promise<boolean> {
       return false;
     }
 
-    const findAutoWorker = await prisma.Staps.findMany({
+    const findAutoWorker = await prisma.staps.findMany({
       where: {
         type: "TRIGGER", // ✅ enum instead of raw string
         typeOfWork: "AUTOMATIC",

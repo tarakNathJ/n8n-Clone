@@ -16,7 +16,7 @@ export const signUpController = async (req: Request, res: Response) => {
             })
         }
 
-        const existingUser = await prisma.User.findUnique({
+        const existingUser = await prisma.user.findUnique({
             where: { email: email },
         });
 
@@ -30,7 +30,7 @@ export const signUpController = async (req: Request, res: Response) => {
 
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
-        const user = await prisma.User.create({
+        const user = await prisma.user.create({
             data: {
 
                 name: name,
@@ -83,7 +83,7 @@ export const LoginController = async (req: Request, res: Response) => {
         }
 
 
-        const userAreExitOrNot = await prisma.User.findUnique({
+        const userAreExitOrNot = await prisma.user.findUnique({
             where: { email: email },
         })
 
@@ -138,7 +138,7 @@ export const updatePassword = async (req: Request, res: Response) => {
         }
 
 
-        const userAreExitOrNot = await prisma.User.findUnique({
+        const userAreExitOrNot = await prisma.user.findUnique({
             where: { email: email },
         })
 
@@ -161,7 +161,7 @@ export const updatePassword = async (req: Request, res: Response) => {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(newPassword, salt);
 
-        const updatedUser = await prisma.User.update({
+        const updatedUser = await prisma.user.update({
             where: {
                 email: email
             },

@@ -14,7 +14,7 @@ export const createWorkFlow = async (req: Request, res: Response) => {
         message: "full fill  all required filed",
       });
     }
-    const findUserAreExitOrNot = await prisma.User.findUnique({
+    const findUserAreExitOrNot = await prisma.user.findUnique({
       where: {
         email: email,
       },
@@ -27,7 +27,7 @@ export const createWorkFlow = async (req: Request, res: Response) => {
       });
     }
 
-    const findWorkflowAreExistOrNot = await prisma.WorkFlow.findUnique({
+    const findWorkflowAreExistOrNot = await prisma.workFlow.findUnique({
       where: { name: name },
     });
 
@@ -38,7 +38,7 @@ export const createWorkFlow = async (req: Request, res: Response) => {
       });
     }
 
-    const CreateWorkFlow = await prisma.WorkFlow.create({
+    const CreateWorkFlow = await prisma.workFlow.create({
       data: {
         name: name,
         createAt: new Date(),
@@ -78,7 +78,7 @@ export const getAllWorkFlow = async (req: Request, res: Response) => {
         message: "full fill  all required filed",
       });
     }
-    const findUserAreExitOrNot = await prisma.User.findUnique({
+    const findUserAreExitOrNot = await prisma.user.findUnique({
       where: {
         email: email,
       },
@@ -91,7 +91,7 @@ export const getAllWorkFlow = async (req: Request, res: Response) => {
       });
     }
 
-    const findWorkflowAreExistOrNot = await prisma.WorkFlow.findMany({
+    const findWorkflowAreExistOrNot = await prisma.workFlow.findMany({
       where: {
         userId: findUserAreExitOrNot.id,
       },
@@ -127,7 +127,7 @@ export const createStaps = async (req: Request, res: Response) => {
       });
     }
 
-    const findUserAreExitOrNot = await prisma.User.findUnique({
+    const findUserAreExitOrNot = await prisma.user.findUnique({
       where: {
         email: email,
       },
@@ -140,7 +140,7 @@ export const createStaps = async (req: Request, res: Response) => {
       });
     }
 
-    const findWorkFlowAreExitOrNot = await prisma.WorkFlow.findUnique({
+    const findWorkFlowAreExitOrNot = await prisma.workFlow.findUnique({
       where: {
         id: workflowId,
       },
@@ -165,7 +165,7 @@ export const createStaps = async (req: Request, res: Response) => {
     });
 
     // console.log(batchOfdata);
-    const StoreData = await prisma.Staps.createMany({
+    const StoreData = await prisma.staps.createMany({
       data: batchOfdata,
     });
 
@@ -210,7 +210,7 @@ export const HookCall = async (req: Request, res: Response) => {
     console.log(userId, workFlowID);
     const body = req.body;
 
-    const findWorkFlow = await prisma.WorkFlow.findUnique({
+    const findWorkFlow = await prisma.workFlow.findUnique({
       where: {
         id: Number(workFlowID),
       },
@@ -231,7 +231,7 @@ export const HookCall = async (req: Request, res: Response) => {
     }
 
     // console.log(ts)
-    const storeData = await prisma.StapsRun.create({
+    const storeData = await prisma.stapsRun.create({
       data: {
         WorkFlowId: findWorkFlow.id,
         metaData: body,
@@ -243,7 +243,7 @@ export const HookCall = async (req: Request, res: Response) => {
   
   
 
-    const addRecord = await prisma.OutBoxStapsRun.create({
+    const addRecord = await prisma.outBoxStapsRun.create({
       data: {
         StapsRunId: storeData.id,
 

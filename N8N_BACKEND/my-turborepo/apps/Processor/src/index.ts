@@ -4,8 +4,8 @@ import {prisma} from '@myorg/database'
 
 
 const kafka = new Kafka({
-    clientId: "newKafka",
-    brokers: ['localhost:9092']
+    clientId: process.env.KAFKA_CLIENT_ID || "newKafka",
+    brokers: [process.env.KAFKA_BROKERS_NAME  || 'localhost:9092']
 })
 
 const producer = kafka.producer();
@@ -17,7 +17,7 @@ async function ProcessAllData() {
     try {
         while (true) {
             console.log("data");
-            const findOutboxRun = await prisma.OutBoxStapsRun.findMany({
+            const findOutboxRun = await prisma.outBoxStapsRun.findMany({
                 where: {},
                 take: 5
             })
@@ -26,7 +26,7 @@ async function ProcessAllData() {
 
             findOutboxRun.map((data: { id: any }) => {
                 producer.send({
-                    topic: "TREAD_DATA",
+                    topic: process.env.KAFKA_TOPIC || "TREAD_DATA",
                     messages: [{
                         value: JSON.stringify({
                             type: "MessageFromProcesser",
@@ -38,7 +38,7 @@ async function ProcessAllData() {
             })
 
 
-            await prisma.OutBoxStapsRun.deleteMany({
+            await prisma.outBoxStapsRun.deleteMany({
                 where: {
                     id: {
                         in: findOutboxRun.map((Data: any) => Data.id)

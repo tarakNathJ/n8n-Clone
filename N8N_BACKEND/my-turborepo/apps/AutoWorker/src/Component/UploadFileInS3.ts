@@ -46,25 +46,28 @@ async function UpdateOnDataBase(
   WorkFlowId: Number,
   StapsId: Number
 ): Promise<boolean> {
-  const savedata = await prisma.StapsRun.create({
+  const savedata = await prisma.stapsRun.create({
     data: {
+      //@ts-ignore
       metaData: {
         FileName: FileName,
-        message: "your all emails",
+        message: "your all all emails",
       },
       Workstatus: "CREATE",
       createdAt: new Date(),
+      // @ts-ignore
       WorkFlowId: WorkFlowId,
     },
   });
-  const saveAutoWork = await prisma.AutoWorkerValidate.create({
+  const saveAutoWork = await prisma.autoWorkerValidate.create({
     data: {
+      // @ts-ignore
       Stapid: StapsId,
       curentTime: new Date(),
     },
   });
 
-  const addRecord = await prisma.OutBoxStapsRun.create({
+  const addRecord = await prisma.outBoxStapsRun.create({
     data: {
       StapsRunId: savedata.id,
 

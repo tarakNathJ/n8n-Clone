@@ -40,5 +40,6 @@ export const  schemaType  : any = {
 
 
 
+// prisma.Staps
 
-
+// AvaliableTriger  AvliableAction StapsRun User OutBoxStapsRun  WorkFlow  Staps  StapCondiction prisma.    AutoWorkerValidate

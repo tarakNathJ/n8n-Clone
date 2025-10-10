@@ -16,7 +16,7 @@ export const createTrigger = async (req: Request, res: Response) => {
             })
         }
 
-        const ChacTriggerAllRadyExist = await prisma.AvaliableTriger.findUnique({
+        const ChacTriggerAllRadyExist = await prisma.avaliableTriger.findUnique({
             where: { name: name },
         })
 
@@ -27,7 +27,7 @@ export const createTrigger = async (req: Request, res: Response) => {
             })
         }
 
-        const addTrigger = await prisma.AvaliableTriger.create({
+        const addTrigger = await prisma.avaliableTriger.create({
             data: {
                 name: name,
                 key: key,
@@ -70,7 +70,7 @@ export const createAction = async (req: Request, res: Response) => {
 
 
 
-        const ChacTriggerAllRadyExist = await prisma.AvliableAction.findUnique({
+        const ChacTriggerAllRadyExist = await prisma.avliableAction.findUnique({
             where: { name: name },
         })
 
@@ -81,7 +81,7 @@ export const createAction = async (req: Request, res: Response) => {
             })
         }
 
-        const addTrigger = await prisma.AvliableAction.create({
+        const addTrigger = await prisma.avliableAction.create({
             data: {
                 name: name,
                 key: key,
@@ -117,7 +117,7 @@ export const createAction = async (req: Request, res: Response) => {
 
 export const getAllTrigger = async (req: Request, res: Response) => {
     try {
-        const getAllTrigger = await prisma.AvaliableTriger.findMany();
+        const getAllTrigger = await prisma.avaliableTriger.findMany();
         if (!getAllTrigger) {
             return res.status(400).json({
                 success: false,
@@ -142,7 +142,7 @@ export const getAllTrigger = async (req: Request, res: Response) => {
 
 export const getAllAction = async (req: Request, res: Response) => {
     try {
-        const getAllTrigger = await prisma.AvliableAction.findMany();
+        const getAllTrigger = await prisma.avliableAction.findMany();
         if (!getAllTrigger) {
             return res.status(400).json({
                 success: false,

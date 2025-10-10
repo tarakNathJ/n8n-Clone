@@ -5,8 +5,8 @@ import { sendMessageTelegram } from './apps/Telegram.js'
 
 
 const kafka = new Kafka({
-    clientId: "newKafka",
-    brokers: ["localhost:9092"]
+    clientId: process.env.KAFKA_CLIENT_ID|| "newKafka",
+    brokers: [process.env.KAFKA_BROKERS_NAME||"localhost:9092"]
 })
 
 
@@ -67,7 +67,7 @@ async function workExecute() {
     try {
         const consumerForOrder = await getConsumer("N8N-CLONE")
         await consumerForOrder.subscribe({
-            topic: "TREAD_DATA",
+            topic:process.env.KAFKA_TOPIC || "TREAD_DATA",
             fromBeginning: true
         })
      
@@ -91,8 +91,9 @@ async function workExecute() {
                         return;
                     }
 
-                    const StapsRunData = await prisma.StapsRun.findUnique({
-                        where: { id: data.Run.StapsRunId },
+                    const StapsRunData = await prisma.stapsRun.findUnique({
+                        //@ts-ignore
+                        where: { id: data?.Run?.StapsRunId },
                     });
 
                     if (!StapsRunData) {
@@ -116,7 +117,7 @@ async function workExecute() {
 
                     if (FindStaps?.name === "TELEGRAM") {
                         const metadata = FindStaps.metadata as { TOKEN: string; CHAT_ID: string };
-                        const ok = await sendMessageTelegram(metadata.TOKEN, metadata.CHAT_ID, JSON.stringify(userData));
+                        const ok = await sendMessageTelegram(metadata.TOKEN, metadata.CHAT_ID, userData);
                         console.log(ok ? " Telegram sent" : " Telegram failed");
                     } else if (FindStaps?.name === "GMAIL") {
                         const metadata = FindStaps.metadata as { EMAIL: string; PASSWORD: string ; MESSAGE:string };
@@ -135,7 +136,7 @@ async function workExecute() {
 
                     const producer = await CreateProducer();
                     producer.send({
-                        topic: "TREAD_DATA",
+                        topic:process.env.KAFKA_TOPIC || "TREAD_DATA",
                         messages: [{
                             value: JSON.stringify(NextDataObject)
                         }]
@@ -159,7 +160,7 @@ async function workExecute() {
 
                     if (FindStaps?.name.toUpperCase() === "TELEGRAM") {
                         const metadata = FindStaps.metadata as { TOKEN: string; CHAT_ID: string };
-                        const ok = await sendMessageTelegram(metadata.TOKEN, metadata.CHAT_ID, JSON.stringify((data as MessageFromWorker).UserMetaData));
+                        const ok = await sendMessageTelegram(metadata.TOKEN, metadata.CHAT_ID, (data as MessageFromWorker).UserMetaData);
                         console.log(ok ? " Telegram sent" : " Telegram failed");
                     } else if (FindStaps?.name.toUpperCase() === "GMAIL") {
                         const metadata = FindStaps.metadata as { email: string; password: string };
@@ -178,7 +179,7 @@ async function workExecute() {
 
                     const producer = await CreateProducer();
                     producer.send({
-                        topic: "TREAD_DATA",
+                        topic: process.env.KAFKA_TOPIC || "TREAD_DATA",
                         messages: [{
                             value: JSON.stringify(NextDataObject)
                         }]

@@ -179,46 +179,46 @@ async function StartAutoWorkerFunction() {
 
         console.log("📩 Received Kafka message:", data);
 
-        // // Artificial delay before processing each message
-        // console.log("🕒 Waiting 5 seconds before processing...");
-        // await delay(5000);
+        // Artificial delay before processing each message
+        console.log("🕒 Waiting 5 seconds before processing...");
+        await delay(5000);
 
-        // try {
-        //   console.log("📨 Starting IMAP fetch for:", data?.data?.metadata?.EMAIL);
-        //   const result = await getAllEmailsAndStoreInfile(
-        //     data?.data?.metadata?.PASSWORD,
-        //     data?.data?.metadata?.EMAIL,
-        //     time
-        //   );
+        try {
+          console.log("📨 Starting IMAP fetch for:", data?.data?.metadata?.EMAIL);
+          const result = await getAllEmailsAndStoreInfile(
+            data?.data?.metadata?.PASSWORD,
+            data?.data?.metadata?.EMAIL,
+            time
+          );
 
-        //   if (result && Array.isArray(result)) {
-        //     console.log(`✅ Processed ${result.length} emails for ${data?.data?.metadata?.EMAIL}`);
-        //     const filePath = await saveToJSON(result);
-        //     if (!filePath) return
-        //     console.log("🗂️ Saved email file:", filePath);
-        //     const UploadOnAwsS3 = await uploadFileOnAws(filePath,data.data.workflowId,data.data.id);
-        //     console.log("data upload on aws s3" , UploadOnAwsS3)
-        //   } else {
-        //     console.warn("⚠️ No emails fetched or process failed.");
-        //   }
+          if (result && Array.isArray(result)) {
+            console.log(`✅ Processed ${result.length} emails for ${data?.data?.metadata?.EMAIL}`);
+            const filePath = await saveToJSON(result);
+            if (!filePath) return
+            console.log("🗂️ Saved email file:", filePath);
+            const UploadOnAwsS3 = await uploadFileOnAws(filePath,data.data.workflowId,data.data.id);
+            console.log("data upload on aws s3" , UploadOnAwsS3)
+          } else {
+            console.warn("⚠️ No emails fetched or process failed.");
+          }
 
-        //   // Manual offset commit after successful processing
-        //   await consumerInstance.commitOffsets([
-        //     {
-        //       topic,
-        //       partition,
-        //       offset: (parseInt(message.offset) + 1).toString(),
-        //     },
-        //   ]);
+          // Manual offset commit after successful processing
+          await consumerInstance.commitOffsets([
+            {
+              topic,
+              partition,
+              offset: (parseInt(message.offset) + 1).toString(),
+            },
+          ]);
 
-        //   console.log(`✅ Committed offset ${message.offset} for topic ${topic}`);
+          console.log(`✅ Committed offset ${message.offset} for topic ${topic}`);
 
-        //   // Delay again to prevent too frequent IMAP logins
-        //   console.log("🕒 Cooling down for 10 seconds before next task...");
-        //   await delay(10000);
-        // } catch (err) {
-        //   console.error("🚨 Error during processing:", err);
-        // }
+          // Delay again to prevent too frequent IMAP logins
+          console.log("🕒 Cooling down for 10 seconds before next task...");
+          await delay(10000);
+        } catch (err) {
+          console.error("🚨 Error during processing:", err);
+        }
       },
     });
   } catch (error: any) {
