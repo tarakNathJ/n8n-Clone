@@ -21,7 +21,7 @@ async function initializeProducer(): Promise<Producer> {
 
 // Run every 10 minutes, all day long
 const task = cron.schedule(
-  "* * * * *",
+  "0 0 * * *",
   async () => {
     await checkAutoWorker();
     console.log("call connect");

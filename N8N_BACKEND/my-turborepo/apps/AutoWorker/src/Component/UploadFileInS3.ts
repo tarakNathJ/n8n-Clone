@@ -11,7 +11,6 @@ import axios from "axios";
 import { prisma } from "@myorg/database";
 import { config } from "dotenv";
 
-
 config();
 const s3Client = new S3Client({
   region: process.env.AWS_REGION || " ",
@@ -42,7 +41,11 @@ async function generatePreSignURL(imageUrl: String) {
   }
 }
 
-async function UpdateOnDataBase(FileName: String, WorkFlowId: Number , StapsId:Number) :Promise <boolean> {
+async function UpdateOnDataBase(
+  FileName: String,
+  WorkFlowId: Number,
+  StapsId: Number
+): Promise<boolean> {
   const savedata = await prisma.StapsRun.create({
     data: {
       metaData: {
@@ -54,12 +57,12 @@ async function UpdateOnDataBase(FileName: String, WorkFlowId: Number , StapsId:N
       WorkFlowId: WorkFlowId,
     },
   });
-   const saveAutoWork =  await prisma.AutoWorkerValidate.create({
-      data:{
-        Stapid:StapsId,
-        curentTime: new Date()
-      }
-    });
+  const saveAutoWork = await prisma.AutoWorkerValidate.create({
+    data: {
+      Stapid: StapsId,
+      curentTime: new Date(),
+    },
+  });
 
   const addRecord = await prisma.OutBoxStapsRun.create({
     data: {
@@ -77,7 +80,7 @@ export async function uploadFileOnAws(
   WorkFlowId: Number,
   StapsId: Number
 ): Promise<boolean> {
-  const filePath = `./emails/${FileName}`;
+  const filePath = `./${FileName}`;
 
   // Check if file exists
   if (!fs.existsSync(FileName)) return false;
@@ -85,17 +88,27 @@ export async function uploadFileOnAws(
   // Generate presigned URL (you must define this function elsewhere)
   const presignUrl = await generatePreSignURL(FileName);
   if (!presignUrl) return false;
+  console.log(presignUrl);
+  console.log(FileName, "   data   ", WorkFlowId, "  data  ", StapsId);
+  // console.log(process.env.AWS_REGION ,"    "  , process.env.AWS_ACCESS_KEY_ID,"   " ,process.env.AWS_SECRET_ACCESS_KEY ,"    ",process.env.AWS_BACKET_NAME );
 
   const fileData = fs.readFileSync(filePath);
-
+  console.log(fileData);
   // Upload file using presigned URL
   const response = await axios.put(presignUrl, fileData, {
     headers: {
       "Content-Type": "application/json",
     },
   });
-   console.log("file upload success fully");
-  const responce : boolean =  await UpdateOnDataBase (FileName,WorkFlowId ,StapsId);
-  
-  return responce;
+  console.log("file upload success fully");
+  const responce: boolean = await UpdateOnDataBase(
+    FileName,
+    WorkFlowId,
+    StapsId
+  );
+  await fs.unlink(`./${FileName}`, () => {
+    console.log("file delete success fully");
+  });
+
+  return true;
 }
