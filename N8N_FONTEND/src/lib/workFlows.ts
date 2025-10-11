@@ -39,7 +39,8 @@ export class WorkFlowService {
                         "Content-Type": "application/json",
                     },
                 })
-                localStorage.setItem(WORKFLOW_ID, `${responce.data.data.id}`);
+                sessionStorage.setItem(WORKFLOW_ID, `${responce.data.data.id}`);
+                console.log(responce);
                 
                 if (responce.data.success == true) {
                     resolve(responce.data);
@@ -72,7 +73,8 @@ export class WorkFlowService {
                     },
                 })
 
-                localStorage.setItem(totalWorkflow,JSON.stringify(responce.data.data));
+                sessionStorage.setItem(totalWorkflow,JSON.stringify(responce.data.data));
+                console.log(responce.data.data);
 
                 if (responce.data.success) {
                     resolve(responce.data.data);

@@ -58,6 +58,10 @@ export default function Dashboard() {
     return () => { }
   }, [])
 
+  useEffect(()=>{
+
+  },[])
+
 
   const formatDuration = (seconds: number) => {
     if (seconds < 60) return `${seconds}s`;
@@ -202,7 +206,7 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            {JSON.parse(localStorage.getItem(totalWorkflow)).map((workflow) => (
+            {JSON.parse(sessionStorage.getItem(totalWorkflow))?.map((workflow) => (
               <div key={workflow.id} className="flex items-center justify-between p-3 rounded-lg bg-n8n-header">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-n8n-node-bg rounded-lg flex items-center justify-center">

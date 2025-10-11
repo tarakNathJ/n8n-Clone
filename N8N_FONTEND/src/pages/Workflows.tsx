@@ -98,6 +98,7 @@ export default function Workflows() {
   };
 
   const handleWorkflowAction = (action: string, workflowId: string, workflowName: string) => {
+    // console.log(action, workflowId, workflowName);
     toast({
       title: 'Action Performed',
       description: `${action} workflow "${workflowName}"`,
@@ -123,6 +124,16 @@ export default function Workflows() {
     }
   }
 
+
+  const editWorkFlow = async (id?: any)=>{
+    try{
+
+      console.log(id);
+
+    }catch(error){
+
+    }
+  }
 
   return (
     <div className="p-6 space-y-6 bg-n8n-canvas min-h-full">
@@ -184,22 +195,32 @@ export default function Workflows() {
 
       {/* Workflows List */}
       <div className="grid gap-4">
-        {JSON.parse(localStorage.getItem(totalWorkflow)).map((workflow) => (
+        {JSON.parse(sessionStorage.getItem(totalWorkflow))?.map((workflow) => (
           <Card key={workflow.id} className="bg-n8n-sidebar border-n8n-node-border hover:border-n8n-node-border/80 transition-colors">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div className="flex-1 space-y-3">
                   <div className="flex items-center gap-3">
-                    <Link 
-                      to={`/workflows/editor/${workflow.id}`}
-                      className="text-xl font-semibold text-n8n-sidebar-foreground hover:text-primary transition-colors"
+                    <div 
+                      onClick={()=>editWorkFlow(workflow.id)}
+                      className="text-xl font-semibold text-n8n-sidebar-foreground hover:text-primary transition-colors cursor-pointer"
                     >
                       {workflow.name}
-                    </Link>
+                      {/* to={`/workflows/editor/${workflow.id}`} */}
+                    </div>
+                    
                     <Badge className={cn('text-xs', getStatusColor(workflow.status|| "success"))}>
                       {workflow.createAt || "success" }
                     </Badge>
+
+                    {workflow?.Staps?.map(( tag:any ,index) => {
+                      
+                      return <div key={index} className='text-primary transition-colors'>{tag.name}</div>
+                    })}
+                    
                   </div>
+
+                  
                   
                   {workflow.description && (
                     <p className="text-n8n-sidebar-foreground/70">{workflow.createAt }</p>
@@ -224,15 +245,18 @@ export default function Workflows() {
                         <span>Last run {formatDate(workflow.lastRun)}</span>
                       </div>
                     )}
-                  </div>
+                  </div> */}
                   
                   <div className="flex flex-wrap gap-1">
-                    {workflow.tags.map((tag) => (
-                      <Badge key={tag} variant="outline" className="text-xs border-n8n-node-border text-n8n-sidebar-foreground/70">
-                        {tag}
+                    {workflow?.Staps?.map(( tag:any ,index) => (
+                      <Badge key={index} variant="outline" className="text-xs border-n8n-node-border text-n8n-sidebar-foreground/70">
+                        {tag?.metadata?.URL || ""}
                       </Badge>
                     ))}
-                  </div> */}
+                  </div> 
+                                 
+
+                  
                 </div>
                 
                 <div className="flex items-center gap-2 ml-4">

@@ -3,6 +3,7 @@ import axios from 'axios'
 
 const AUTH_KEY = 'auth_token';
 const USER_KEY = 'user_info';
+const email = "email"
 
 export interface AuthUser {
   id: string;
@@ -40,6 +41,7 @@ export class AuthService {
 
         localStorage.setItem(AUTH_KEY, responce.data.token);
         localStorage.setItem(USER_KEY, JSON.stringify(responce.data.payload));
+        localStorage.setItem(email ,responce?.data?.payload?.email)
         if (responce.data.success == true) {
           resolve(responce.data.payload);
         } else {

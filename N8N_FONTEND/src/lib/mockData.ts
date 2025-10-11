@@ -236,21 +236,29 @@ export const mockNodeTypes: NodeType[] = [
     color: 'hsl(202, 100%, 50%)',
     description: 'Send messages to Telegram'
   },
-  {
-    id: 'form',
-    name: 'Form Trigger',
-    icon: '📝',
+  // {
+  //   id: 'form',
+  //   name: 'Form Trigger',
+  //   icon: '📝',
+  //   category: 'trigger',
+  //   color: 'hsl(var(--n8n-warning))',
+  //   description: 'Trigger on form submissions'
+  // },
+  // {
+  //   id: 'ai-agent',
+  //   name: 'AI Agent',
+  //   icon: '🤖',
+  //   category: 'action',
+  //   color: 'hsl(280, 100%, 50%)',
+  //   description: 'AI-powered responses'
+  // },
+   {
+    id: 'RESEVE_EMAIL',
+    name: 'Reseve Email',
+    icon: '📥',
     category: 'trigger',
-    color: 'hsl(var(--n8n-warning))',
-    description: 'Trigger on form submissions'
-  },
-  {
-    id: 'ai-agent',
-    name: 'AI Agent',
-    icon: '🤖',
-    category: 'action',
     color: 'hsl(280, 100%, 50%)',
-    description: 'AI-powered responses'
+    description: 'reseve your all email'
   },
   {
     id: 'condition',

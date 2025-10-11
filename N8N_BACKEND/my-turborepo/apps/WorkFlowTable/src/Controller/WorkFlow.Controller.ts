@@ -78,29 +78,48 @@ export const getAllWorkFlow = async (req: Request, res: Response) => {
         message: "full fill  all required filed",
       });
     }
-    const findUserAreExitOrNot = await prisma.user.findUnique({
-      where: {
-        email: email,
-      },
+
+    // Step 1: Find the user
+    const user = await prisma.user.findUnique({
+      where: { email },
     });
 
-    if (!findUserAreExitOrNot) {
-      return res.status(400).json({
+    if (!user) {
+      return res.status(404).json({
         success: false,
-        message: "this User are not exit ",
+        message: "User does not exist",
       });
     }
 
-    const findWorkflowAreExistOrNot = await prisma.workFlow.findMany({
-      where: {
-        userId: findUserAreExitOrNot.id,
+    // Step 2: Find all workflows for that user, including first step (index = 0 or 1)
+    const workflows = await prisma.workFlow.findMany({
+      where: { userId: user.id },
+      select: {
+        name: true, // only workflow name
+        createAt: true,
+
+        Staps: {
+          where: { index: 0 }, // only first step
+          take: 1,
+          select: {
+            name: true,
+            metadata: true, // only metadata from first step
+          },
+        },
       },
     });
+
+    if (!workflows.length) {
+      return res.status(404).json({
+        success: false,
+        message: "No workflows found for this user",
+      });
+    }
 
     return res.status(200).json({
       success: true,
       meassage: "success fully fetch all data",
-      data: findWorkflowAreExistOrNot,
+      data: workflows,
     });
   } catch (error) {
     return res.status(500).json({
@@ -151,6 +170,20 @@ export const createStaps = async (req: Request, res: Response) => {
         success: false,
         message: "this work flow are not exit ",
         findUserAreExitOrNot,
+      });
+    }
+
+    const chakstapsAreExistOrNot = await prisma.staps.findFirst({
+      where: {
+        workflowId: findWorkFlowAreExitOrNot.id,
+        userId: findUserAreExitOrNot.id,
+      },
+      select: { id: true },
+    });
+    if (chakstapsAreExistOrNot) {
+      return res.status(400).json({
+        success:false,
+        message:"workflow all ready exist"
       });
     }
 
@@ -240,9 +273,6 @@ export const HookCall = async (req: Request, res: Response) => {
       },
     });
 
-  
-  
-
     const addRecord = await prisma.outBoxStapsRun.create({
       data: {
         StapsRunId: storeData.id,
@@ -264,3 +294,77 @@ export const HookCall = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const curentExecutingWork = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "full fill  all required filed",
+      });
+    }
+
+    // Step 1: Find the user
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User does not exist",
+      });
+    }
+
+    const getAllCurentWork = await prisma.staps.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: {
+        name: true,
+        type: true,
+        typeOfWork: true,
+        createdAt: true,
+      },
+    });
+
+    if (!getAllCurentWork.length) {
+      return res.status(404).json({
+        success: false,
+        message: "No staps  found for this user",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "that's your all data",
+      getAllCurentWork,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      meassage: " server side error on  curent Executing Work",
+    });
+  }
+};
+
+/**const recentRuns = await prisma.stapsRun.findMany({
+  where: {
+    workFlow: {
+      userId: 1,
+    },
+  },
+  orderBy: { createdAt: "desc" },
+  take: 5,
+  select: {
+    id: true,
+    metaData: true,
+    Workstatus: true,
+    createdAt: true,
+    workFlow: {
+      select: { id: true, name: true },
+    },
+  },
+});
+ */
