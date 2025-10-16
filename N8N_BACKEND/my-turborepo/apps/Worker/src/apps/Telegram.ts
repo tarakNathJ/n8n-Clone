@@ -96,6 +96,7 @@ export async function sendMessageTelegram(
 
     let Result = false;
     if ("FileName" in message) {
+      Result  = await sendFileinTelegramChatBot(token, chatId,message)
     } else {
       Result = await sendSimpleMessage(token, chatId, message);
     }
@@ -151,7 +152,7 @@ async function sendSimpleMessage(
 async function sendFileinTelegramChatBot(
   token: string,
   chatId: string,
-  message: object
+  messages: object
 ): Promise<boolean> {
   try {
     if (!token) {
@@ -159,10 +160,10 @@ async function sendFileinTelegramChatBot(
     }
     //@ts-ignore gget message
 
-    const { message: caption } = message;
+    const { message: caption } = messages;
     // get data from aws s3
     //@ts-ignore
-    const filePath = await downloadFile(message.FileName);
+    const filePath = await downloadFile(messages.FileName);
     if (!filePath || typeof filePath !== "string") {
       return false;
     }

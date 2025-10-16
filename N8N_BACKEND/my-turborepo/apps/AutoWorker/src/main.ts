@@ -171,7 +171,7 @@ async function StartAutoWorkerFunction() {
            const status =  await checkThisWorkUnder24Hours(data?.data?.id);
            if (!status) return 
           //@ts-ignore
-           time = status;
+           time = status
         } catch (err) {
           console.error("❌ JSON parse failed:", err);
           return;
@@ -192,6 +192,8 @@ async function StartAutoWorkerFunction() {
           );
 
           if (result && Array.isArray(result)) {
+
+            if (result.length == 0) return 
             console.log(`✅ Processed ${result.length} emails for ${data?.data?.metadata?.EMAIL}`);
             const filePath = await saveToJSON(result);
             if (!filePath) return

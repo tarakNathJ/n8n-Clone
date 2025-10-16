@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "npx tsc &&  nodemon dist/index.js"
+    "dev": "npx tsc &&  node dist/index.js"
   },
   "keywords": [],
   "author": "",
