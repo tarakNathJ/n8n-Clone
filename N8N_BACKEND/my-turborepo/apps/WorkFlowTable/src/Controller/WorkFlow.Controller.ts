@@ -116,10 +116,53 @@ export const getAllWorkFlow = async (req: Request, res: Response) => {
       });
     }
 
+    // step 3 : fine  all workflow and  stapes and all stapes run and
+
+    const users = await prisma.user.findUnique({
+      where: { id: user.id },
+      include: {
+        workFlows: {
+          include: {
+            Staps: true,
+            stapsRuns: true,
+          },
+        },
+      },
+    });
+
+    if (!users) {
+      throw new Error("User not found");
+    }
+
+    // Count Workflows
+    const totalWorkflows = users.workFlows.length;
+
+    // Count total Staps across all workflows
+    const totalStaps = users.workFlows.reduce(
+      (sum, wf) => sum + wf.Staps.length,
+      0
+    );
+
+    // Count total executed StapsRun
+    const totalStapsRun = users.workFlows.reduce(
+      (sum, wf) => sum + wf.stapsRuns.length,
+      0
+    );
+
+    // Count how many Staps are triggers
+    const totalTriggers = users.workFlows.reduce(
+      (sum, wf) => sum + wf.Staps.filter((s) => s.type === "TRIGGER").length,
+      0
+    );
+
     return res.status(200).json({
       success: true,
       meassage: "success fully fetch all data",
       data: workflows,
+      totalWorkflows,
+      totalStaps,
+      totalStapsRun,
+      totalTriggers,
     });
   } catch (error) {
     return res.status(500).json({
@@ -182,8 +225,8 @@ export const createStaps = async (req: Request, res: Response) => {
     });
     if (chakstapsAreExistOrNot) {
       return res.status(400).json({
-        success:false,
-        message:"workflow all ready exist"
+        success: false,
+        message: "workflow all ready exist",
       });
     }
 

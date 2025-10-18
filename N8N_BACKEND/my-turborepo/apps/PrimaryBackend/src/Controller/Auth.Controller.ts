@@ -16,6 +16,8 @@ export const signUpController = async (req: Request, res: Response) => {
             })
         }
 
+        console.log("data ")
+
         const existingUser = await prisma.user.findUnique({
             where: { email: email },
         });

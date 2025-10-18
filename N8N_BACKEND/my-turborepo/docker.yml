@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  primary-backend:
+    image: primary-backend
+    container_name: primary-backend
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      DATABASE_URL: "pondb?sslmode=require&channel_binding=require"
+      JWT_SECRET: "this is my key"
+      JWT_EXPIRES_IN: "24h"
+    restart: always
+  

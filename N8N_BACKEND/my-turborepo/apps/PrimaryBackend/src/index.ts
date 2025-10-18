@@ -18,7 +18,10 @@ app.use("/api/auth",typesRoute)
 
 
 
-app.listen(process.env.PORT,()=>{
+
+
+// @ts-ignore
+app.listen(process.env.PORT || 3000, '0.0.0.0',()=>{
     console.log(`server run at ${process.env.PORT}`)
 })
 

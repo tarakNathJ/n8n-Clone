@@ -1,104 +1,4 @@
-// import { Consumer, Kafka } from "kafkajs";
-// import { config } from "dotenv";
-// import {
-//   getAllEmailsAndStoreInfile,
-//   saveToJSON,
-// } from "./Component/getAllEmailAndUploadOnCloude.js";
-// config();
 
-// const ConsumeInit = new Kafka({
-//   clientId: "myKafka",
-//   brokers: ["localhost:9092"],
-// });
-
-// let consumer: Consumer | null = null;
-
-// async function createComsumer(
-//   GROUP_ID?: string | undefined
-// ): Promise<Consumer> {
-//   if (consumer) return consumer;
-
-//   consumer = ConsumeInit.consumer({ groupId: "autoWorker" });
-//   await consumer.connect();
-//   return consumer;
-// }
-
-// interface MessageFromProcesser {
-//   data: any;
-//   type: String;
-//   Run: {
-//     id: Number;
-//     StapsRunId: Number;
-//     createdAt: String;
-//     updatedAt: String;
-//   };
-//   stage: Number;
-// }
-
-// function delay(ms: number) {
-//   return new Promise((res) => setTimeout(res, ms));
-// }
-
-
-// async function StartAutoWorkerFunction() {
-//   try {
-//     // get kafka consumer instance
-//     const getconsumerInstance = await createComsumer(
-//       process.env.GROUP_ID || "AUTO_WORKER"
-//     );
-//     //
-//     getconsumerInstance.subscribe({
-//       topic: process.env.TOPIC_NAME || "AUTO_TOPIC",
-//       fromBeginning: true,
-//     });
-
-//     getconsumerInstance.run({
-//       autoCommit: true,
-//       eachMessage: async ({ topic, message, partition, pause }) => {
-//         // await getconsumerInstance.pause([{ topic, partitions: [partition] }]);
-
-//         let data: MessageFromProcesser;
-//         try {
-//           data = JSON.parse(message.value?.toString() || "{}");
-
-//           console.log(data);
-//           setTimeout(async () => {
-//             const status = await getAllEmailsAndStoreInfile(
-//               data?.data?.metadata?.PASSWORD,
-//               data?.data?.metadata?.EMAIL
-//             );
-
-//             if (!status) return;
-//             // await saveToJSON(status);
-//             console.log(status);
-//           }, 3000);
-//         } catch (err) {
-//           console.error(" JSON parse failed", err);
-
-//           return;
-//         }
-
-//         // Commit the current message offset manually
-//         getconsumerInstance.commitOffsets([
-//           {
-//             topic,
-//             partition,
-//             offset: (parseInt(message.offset) + 1).toString(),
-//           },
-//         ]);
-//       },
-//     });
-//   } catch (error: unknown) {
-//     if (error instanceof Error) {
-//       console.error("Error on Kafka:", error.message);
-//       console.error(error.stack); // optional: full stack trace
-//     } else {
-//       console.error("Unknown error on Kafka:", error);
-//     }
-//     process.exit(1);
-//   }
-// }
-// StartAutoWorkerFunction();
 
 
 
@@ -116,8 +16,8 @@ import {checkThisWorkUnder24Hours} from './Component/ChackThisWork.js'
 config();
 
 const kafka = new Kafka({
-  clientId: "myKafka",
-  brokers: ["localhost:9092"],
+  clientId: process.env.KAFKA_CLIENT_ID||"myKafka",
+  brokers: [process.env.KAFKA_BROKERS_NAME||"localhost:9092"],
 });
 
 let consumer: Consumer | null = null;

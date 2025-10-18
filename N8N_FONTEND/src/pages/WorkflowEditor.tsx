@@ -41,6 +41,7 @@ import CustomNode from "@/components/workflow/CustomNode";
 import NodePalette from "@/components/workflow/NodePalette";
 import axios from "axios";
 
+
 const nodeTypes = {
   custom: CustomNode,
 };
@@ -348,6 +349,8 @@ function WorkflowEditor() {
           title: " Workflow Saved ",
           description: `"${workflowName}" success fully save workflow.`,
         });
+        navigate("/dashboard")
+
       }
       console.log(createArray);
     } catch (error) {
