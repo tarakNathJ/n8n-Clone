@@ -1,0 +1,139 @@
+version: "3.9"
+
+services:
+
+  primary-backend:
+    image: primary-backend:latest
+    container_name: primary-backend
+    depends_on:
+      - kafka
+    environment:   
+      JWT_SECRET: thiismykey
+      JWT_EXPIRES_IN : "24h"
+      PORT : 3000
+      DATABASE_URL  : "postgresql:/?sslmode=require&channel_binding=require"
+      NODE_ENV : "dev"
+    ports:
+      - "3000:3000"
+    restart: always
+
+  work_flow:
+    image: work_flow:latest
+    container_name: work_flow
+    depends_on:
+      - kafka
+    environment:
+      PORT : 3004
+      DATABASE_URL : "postgresql:/=require&channel_binding=require"
+      NODE_ENV : dev
+      WEB_HOOK_URL : "http://localhost:3004/api/hooks"
+    ports:
+      - "3004:3004"
+    restart: always
+
+  worker:
+    image: worker:latest
+    container_name: worker
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_BROKER: kafka:9092
+      APP_ENV: production
+      AWS_BACKET_NAME: AWS_BACKET_NAME(s3) 
+      AWS_REGION: aws region
+      AWS_ACCESS_KEY_ID: AWS_ACCESS_KEY
+      AWS_SECRET_ACCESS_KEY: AWS_SECRET_ACCESS_KEY
+      KAFKA_CLIENT_ID: myKafka
+      KAFKA_BROKERS_NAME: kafka:9092
+      KAFKA_TOPIC: KAFKA_TOPIC
+      NODE_ENV: dev
+      DATABASE_URL: "postgresql:?sslmode=require&channel_binding=require"
+    restart: always
+
+  processor:
+    image: processor:latest
+    container_name: processor
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_BROKER : kafka:9092
+      APP_ENV : production
+      KAFKA_TOPIC :  KAFKA_TOPIC 
+      KAFKA_BROKERS_NAME : KAFKA_BROKERS_NAME
+      KAFKA_CLIENT_ID : KAFKA_CLIENT_ID
+      NODE_ENV : dev
+      DATABASE_URL : postgresql:?sslmode=require&channel_binding=require
+
+    restart: always
+
+  cron_job:
+    image: cron_job:latest
+    container_name: cron_job
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_BROKERS_NAME : KAFKA_BROKERS_NAME
+      KAFKA_CLIENT_ID : KAFKA_CLIENT_ID
+      KAFKA_TOPIC : KAFKA_TOPIC
+      NODE_ENV : dev
+      DATABASE_URL : "postgresql:sslmode=require&channel_binding=require"
+
+    restart: always
+
+  auto_worker:
+    image: auto_worker:latest
+    container_name: auto_worker
+    depends_on:
+      - kafka
+    environment:
+      NODE_ENV : dev
+      DATABASE_URL : "postgresql://?sslmode=require&channel_binding=require"     
+      GROUP_ID : KAFKA_GROUP_ID
+      TOPIC_NAME : KAFKA_TOPIC_NAME
+      KAFKA_CLIENT_ID : KAFKA_CLIENT_ID
+      KAFKA_BROKERS_NAME : KAFKA_BROKERS_NAME 
+      APP_ENV : APP_ENV(production/dev) 
+      KAFKA_TOPIC : KAFKA_TOPIC
+      AWS_BACKET_NAME: AWS_BACKET_NAME(s3) 
+      AWS_REGION: aws region
+      AWS_ACCESS_KEY_ID: AWS_ACCESS_KEY
+      AWS_SECRET_ACCESS_KEY: AWS_SECRET_ACCESS_KEY
+    restart: always
+
+  # ==============================
+  # Apache Kafka 
+  # ==============================
+  kafka:
+    image: apache/kafka:latest
+    container_name: kafka
+    hostname: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      # KRaft mode configuration
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk # <-- unique cluster ID (change if needed)
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    restart: always
+
+# ==============================
+# Networking & Volumes
+# ==============================
+networks:
+  default:
+    name: backend_network
+
+volumes:
+  kafka-data:
