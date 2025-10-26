@@ -464,31 +464,31 @@ function WorkflowEditor() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button
+            {/* <Button
               variant="outline"
               size="sm"
               className="border-n8n-node-border text-n8n-sidebar-foreground hover:bg-n8n-sidebar"
             >
               <Share2 className="h-4 w-4 mr-2" />
               Share
-            </Button>
+            </Button> */}
             <Button
               variant="outline"
               size="sm"
               onClick={handleSave}
-              className="border-n8n-node-border text-n8n-sidebar-foreground hover:bg-n8n-sidebar"
+              className="border-n8n-node-border bg-primary/90 duration-75 text-n8n-sidebar-foreground hover:bg-n8n-sidebar"
             >
               <Save className="h-4 w-4 mr-2" />
               Save
             </Button>
-            <Button
+            {/* <Button
               size="sm"
               onClick={handleExecute}
               className="bg-primary hover:bg-primary/90"
             >
               <Play className="h-4 w-4 mr-2" />
               Execute workflow
-            </Button>
+            </Button> */}
           </div>
         </div>
 
