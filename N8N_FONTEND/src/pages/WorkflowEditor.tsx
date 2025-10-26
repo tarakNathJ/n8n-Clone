@@ -371,11 +371,19 @@ function WorkflowEditor() {
     });
   };
   const TelegramData = async () => {
-    console.log(telegramData);
+    
+    toast({
+      title: "save telegram meta data",
+      description: `${telegramData} : success fully save data`,
+    })
   };
 
   const ReseveEmails = async () => {
-    console.log(reseveEmail);
+    
+    toast({
+      title: "save reseve Email meta data",
+      description: `${reseveEmail} : success fully save data`,
+    })
   };
 
   // save email data
@@ -387,12 +395,20 @@ function WorkflowEditor() {
     });
   };
   const emailDatas = async () => {
-    console.log(emailData);
+    
+      toast({
+      title: "save  Email meta data",
+      description: `${emailData} : success fully save data`,
+    })
   };
 
   // save webhook data
   const webhookData = async () => {
-    console.log(HTTP_Method);
+    
+      toast({
+      title: "save  WEBHOOK meta data",
+      description: `${HTTP_Method} : success fully save data`,
+    })
   };
 
   // save reseve email data

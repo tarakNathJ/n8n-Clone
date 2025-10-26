@@ -132,12 +132,12 @@ export default function Dashboard() {
             All the workflows, credentials and executions you have access to
           </p>
         </div>
-        <Link to="/workflows/editor">
-          <Button className="bg-primary hover:bg-primary/90">
+        
+          <Button onClick={createNewWorkflow} className="bg-primary hover:bg-primary/90">
             <Plus className="h-4 w-4 mr-2" />
             Create Workflow
           </Button>
-        </Link>
+       
       </div>
 
       {/* Stats Cards */}
