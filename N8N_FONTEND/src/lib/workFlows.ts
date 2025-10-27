@@ -1,8 +1,6 @@
 import axios from "axios";
 import { useAuth } from "@/contexts/AuthContext";
 
-const AUTH_KEY = "auth_token";
-const USER_KEY = "user_info";
 const WORKFLOW_ID = "work_flow_id";
 const totalWorkflow = "totalWorkflow";
 const countWorkflow = "countWorkflow";

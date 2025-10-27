@@ -48,4 +48,4 @@ COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/node_modules ./node_modules
 
 
-CMD [ "node" , "dist/index.js" ]
+CMD [ "node" , "dist/main.js" ]

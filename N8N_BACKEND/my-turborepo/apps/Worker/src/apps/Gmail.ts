@@ -12,6 +12,9 @@ export async function SendEmail(
   message: string
 ): Promise<SentMessageInfo | Error> {
   try {
+
+
+    
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 587,
@@ -29,7 +32,7 @@ export async function SendEmail(
       text: "Hello world?",
       html: `<h2>${message}</h2>`,
     });
-
+    
     return true;
   } catch (error: any) {
     return false;

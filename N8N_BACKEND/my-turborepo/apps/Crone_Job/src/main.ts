@@ -80,4 +80,5 @@ async function checkAutoWorker(): Promise<boolean> {
   }
 }
 
+console.log("cron job run ")
 task.start();

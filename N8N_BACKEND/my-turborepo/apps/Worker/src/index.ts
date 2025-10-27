@@ -120,9 +120,10 @@ async function workExecute() {
                         const ok = await sendMessageTelegram(metadata.TOKEN, metadata.CHAT_ID, userData);
                         console.log(ok ? " Telegram sent" : " Telegram failed");
                     } else if (FindStaps?.name === "GMAIL") {
+                        
                         const metadata = FindStaps.metadata as { EMAIL: string; PASSWORD: string ; MESSAGE:string };
                         const ok = await SendEmail(metadata.EMAIL, metadata.PASSWORD, userData.email, metadata.MESSAGE);
-                        console.log(ok ? " Email sent" : " Email failed");
+                        
                     }
 
 
@@ -161,12 +162,13 @@ async function workExecute() {
                     if (FindStaps?.name.toUpperCase() === "TELEGRAM") {
                         const metadata = FindStaps.metadata as { TOKEN: string; CHAT_ID: string };
                         const ok = await sendMessageTelegram(metadata.TOKEN, metadata.CHAT_ID, (data as MessageFromWorker).UserMetaData);
-                        console.log(ok ? " Telegram sent" : " Telegram failed");
+                        
                     } else if (FindStaps?.name.toUpperCase() === "GMAIL") {
                         const metadata = FindStaps.metadata as { email: string; password: string };
                         // @ts-ignore
-                        const ok = await SendEmail(metadata.email, metadata.password, (data as MessageFromWorker).UserMetaData.email as any | undefined, (data as MessageFromWorker).UserMetaData.message);
-                        console.log(ok ? " Email sent" : " Email failed");
+                        // const ok = await SendEmail(metadata.email, metadata.password, (data as MessageFromWorker).UserMetaData.email as any | undefined, (data as MessageFromWorker).UserMetaData.message);
+                        const ok = await SendEmail(metadata.EMAIL, metadata.PASSWORD, data.UserMetaData.email, metadata.MESSAGE);
+                        
                     }
 
                     const NextDataObject: MessageFromWorker = {

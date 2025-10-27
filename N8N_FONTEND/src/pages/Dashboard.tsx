@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Activity,
@@ -8,27 +8,16 @@ import {
   Plus,
   ArrowRight,
   Workflow,
-  Calendar,
-  Users,
 } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  mockWorkspaceStats,
-  mockWorkflows,
-  mockExecutions,
-} from "@/lib/mockData";
+import { mockWorkflows, mockExecutions } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
 import { useWorkflow } from "@/contexts/WorkFlowContext";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { Skeleton } from "@/components/ui/skeleton";
 interface responce {
   data: any;
   message: String;
@@ -42,8 +31,6 @@ export default function Dashboard() {
   const totalTriggers = "totalTriggers";
   const navigate = useNavigate();
   const totalWorkflow = "totalWorkflow";
-  const stats = mockWorkspaceStats;
-  const recentWorkflows = mockWorkflows.slice(0, 3);
   const recentExecutions = mockExecutions.slice(0, 5);
   const [curentWorkFlow, setWorkFlow] = useState({});
   const { getWorkFlow, createWorkFlow } = useWorkflow();
@@ -132,137 +119,175 @@ export default function Dashboard() {
             All the workflows, credentials and executions you have access to
           </p>
         </div>
-        
-          <Button onClick={createNewWorkflow} className="bg-primary hover:bg-primary/90">
-            <Plus className="h-4 w-4 mr-2" />
-            Create Workflow
-          </Button>
-       
+
+        <Button
+          onClick={createNewWorkflow}
+          className="bg-primary hover:bg-primary/90"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Create Workflow
+        </Button>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-n8n-sidebar border-n8n-node-border">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-n8n-sidebar-foreground">
-              workflows
-            </CardTitle>
-            <Activity className="h-4 w-4 text-n8n-sidebar-foreground/60" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-n8n-sidebar-foreground">
-              {sessionStorage.getItem(countWorkflow) || 0}
-            </div>
-            <p className="text-xs text-n8n-sidebar-foreground/60">
-              active workflow
-            </p>
-          </CardContent>
-        </Card>
+        {!sessionStorage.getItem(countWorkflow) ? (
+          <Skeleton></Skeleton>
+        ) : (
+          <Card className="bg-n8n-sidebar border-n8n-node-border">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-n8n-sidebar-foreground">
+                workflows
+              </CardTitle>
+              <Activity className="h-4 w-4 text-n8n-sidebar-foreground/60" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-n8n-sidebar-foreground">
+                {sessionStorage.getItem(countWorkflow) || 0}
+              </div>
+              <p className="text-xs text-n8n-sidebar-foreground/60">
+                active workflow
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
-        <Card className="bg-n8n-sidebar border-n8n-node-border">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-n8n-sidebar-foreground">
-              total trigger
-            </CardTitle>
-            <XCircle className="h-4 w-4 text-n8n-sidebar-foreground/60" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-n8n-sidebar-foreground">
-              {sessionStorage.getItem(totalTriggers) || 0}
-            </div>
-            <p className="text-xs text-n8n-sidebar-foreground/60">
-              active trigger
-            </p>
-          </CardContent>
-        </Card>
+        {!sessionStorage.getItem(totalTriggers) ? (
+          <Skeleton></Skeleton>
+        ) : (
+          <Card className="bg-n8n-sidebar border-n8n-node-border">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-n8n-sidebar-foreground">
+                total trigger
+              </CardTitle>
+              <XCircle className="h-4 w-4 text-n8n-sidebar-foreground/60" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-n8n-sidebar-foreground">
+                {sessionStorage.getItem(totalTriggers) || 0}
+              </div>
+              <p className="text-xs text-n8n-sidebar-foreground/60">
+                active trigger
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
-        <Card className="bg-n8n-sidebar border-n8n-node-border">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-n8n-sidebar-foreground">
-              Workflow Execution Utilization
-            </CardTitle>
-            <CheckCircle className="h-4 w-4 text-n8n-sidebar-foreground/60" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-n8n-sidebar-foreground">
-              {sessionStorage.getItem(totalStapsRun) || 0}
-              
-            </div>
-            <p className="text-xs text-n8n-sidebar-foreground/60">
-              how many time execute this your workflow
-            </p>
-          </CardContent>
-        </Card>
+        {!sessionStorage.getItem(totalStapsRun) ? (
+          <Skeleton></Skeleton>
+        ) : (
+          <Card className="bg-n8n-sidebar border-n8n-node-border">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-n8n-sidebar-foreground">
+                Workflow Execution Utilization
+              </CardTitle>
+              <CheckCircle className="h-4 w-4 text-n8n-sidebar-foreground/60" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-n8n-sidebar-foreground">
+                {sessionStorage.getItem(totalStapsRun) || 0}
+              </div>
+              <p className="text-xs text-n8n-sidebar-foreground/60">
+                how many time execute this your workflow
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
-        <Card className="bg-n8n-sidebar border-n8n-node-border">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-n8n-sidebar-foreground">
-              total nodes
-            </CardTitle>
-            <Clock className="h-4 w-4 text-n8n-sidebar-foreground/60" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-n8n-sidebar-foreground">
-              {sessionStorage.getItem(totalStaps) || 0}
-            </div>
-            <p className="text-xs text-n8n-sidebar-foreground/60">
-              all active nodes
-            </p>
-          </CardContent>
-        </Card>
+        {!sessionStorage.getItem(totalStaps) ? (
+          <Skeleton>
+            <Card className="bg-n8n-sidebar border-n8n-node-border opacity-0">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-n8n-sidebar-foreground">
+                  total nodes
+                </CardTitle>
+                <Clock className="h-4 w-4 text-n8n-sidebar-foreground/60" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-n8n-sidebar-foreground">
+                  {sessionStorage.getItem(totalStaps) || 0}
+                </div>
+                <p className="text-xs text-n8n-sidebar-foreground/60">
+                  http://localhost:8080/dashboard all active nodes
+                </p>
+              </CardContent>
+            </Card>
+          </Skeleton>
+        ) : (
+          <Card className="bg-n8n-sidebar border-n8n-node-border">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-n8n-sidebar-foreground">
+                total nodes
+              </CardTitle>
+              <Clock className="h-4 w-4 text-n8n-sidebar-foreground/60" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-n8n-sidebar-foreground">
+                {sessionStorage.getItem(totalStaps) || 0}
+              </div>
+              <p className="text-xs text-n8n-sidebar-foreground/60">
+                http://localhost:8080/dashboard all active nodes
+              </p>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Workflows */}
-        <Card className="bg-n8n-sidebar border-n8n-node-border">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-n8n-sidebar-foreground">
-                Recent Workflows
-              </CardTitle>
-              <Link to="/workflows">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-n8n-sidebar-foreground/60"
-                >
-                  View all
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Button>
-              </Link>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {JSON.parse(sessionStorage.getItem(totalWorkflow))?.map(
-              (workflow, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-3 rounded-lg bg-n8n-header"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-n8n-node-bg rounded-lg flex items-center justify-center">
-                      <Workflow className="h-5 w-5 text-n8n-sidebar-foreground" />
-                    </div>
-                    <div>
-                      <div className="font-medium text-n8n-sidebar-foreground">
-                        {workflow.name}
-                      </div>
-                      <div className="text-sm text-n8n-sidebar-foreground/60">
-                        Last updated {formatDate(workflow.updatedAt)}
-                      </div>
-                    </div>
-                  </div>
-                  <Badge
-                    className={cn("text-xs", getStatusColor(workflow.status))}
-                  >
-                    {workflow.status}
-                  </Badge>
-                </div>
-              )
-            )}
-          </CardContent>
-        </Card>
 
+        {!sessionStorage.getItem(totalWorkflow) ? (
+          <Skeleton></Skeleton>
+        ) : (
+          <Card className="bg-n8n-sidebar border-n8n-node-border">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-n8n-sidebar-foreground">
+                  Recent Workflows
+                </CardTitle>
+                <Link to="/workflows">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-n8n-sidebar-foreground/60"
+                  >
+                    View all
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </Link>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {JSON.parse(sessionStorage.getItem(totalWorkflow))?.map(
+                (workflow, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 rounded-lg bg-n8n-header"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-n8n-node-bg rounded-lg flex items-center justify-center">
+                        <Workflow className="h-5 w-5 text-n8n-sidebar-foreground" />
+                      </div>
+                      <div>
+                        <div className="font-medium text-n8n-sidebar-foreground">
+                          {workflow.name}
+                        </div>
+                        <div className="text-sm text-n8n-sidebar-foreground/60">
+                          Last updated {formatDate(workflow.updatedAt)}
+                        </div>
+                      </div>
+                    </div>
+                    <Badge
+                      className={cn("text-xs", getStatusColor(workflow.status))}
+                    >
+                      {workflow.status}
+                    </Badge>
+                  </div>
+                )
+              )}
+            </CardContent>
+          </Card>
+        )}
         {/* Recent Executions */}
         <Card className="bg-n8n-sidebar border-n8n-node-border">
           <CardHeader>

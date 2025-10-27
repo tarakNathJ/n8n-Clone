@@ -174,7 +174,7 @@ function WorkflowEditor() {
   // --- ADDED: keyboard support (Delete / Backspace)
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if ((e.key === "Delete" || e.key === "Backspace") && selectedNode) {
+      if ((e.key === "Delete" ) && selectedNode) {
         handleDeleteNode();
       }
     };
@@ -738,7 +738,7 @@ function WorkflowEditor() {
                             email
                           </label>
                           <Input
-                            placeholder="telegram token "
+                            placeholder="enter your email"
                             className="bg-n8n-header border-n8n-node-border text-n8n-sidebar-foreground"
                             name="EMAIL"
                             onChange={OnchangeHandelReseveEmail}
@@ -750,7 +750,7 @@ function WorkflowEditor() {
                             app password
                           </label>
                           <Input
-                            placeholder="  telegram chat  id "
+                            placeholder="  app password "
                             onChange={OnchangeHandelReseveEmail}
                             name="PASSWORD"
                             className="bg-n8n-header border-n8n-node-border text-n8n-sidebar-foreground"
