@@ -232,8 +232,8 @@ async function waitForRepliesSince(
 ): Promise< emailReplyObject[] > {
   // IMAP Config
   try {
-    console.log("Waiting 2 seconds before processing");
-    delay(2000);
+    console.log("Waiting 3 seconds before processing");
+    delay(3000);
     const config = {
       imap: {
         user: metadata.EMAIL,

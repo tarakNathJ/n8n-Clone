@@ -340,39 +340,39 @@ function WorkflowEditor() {
 
     
 
-    // try {
+    try {
      
-    //   const responce: any = await axios.post(
-    //     `${import.meta.env.VITE_WORKFLOW_BACKEND}/createSteps`,
-    //     {
-    //       email: userObj.email,
-    //       workflowId: workflowId,
-    //       batchOfdata: createArray,
-    //     },
-    //     {
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //     }
-    //   );
+      const responce: any = await axios.post(
+        `${import.meta.env.VITE_WORKFLOW_BACKEND}/createSteps`,
+        {
+          email: userObj.email,
+          workflowId: workflowId,
+          batchOfdata: createArray,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    //   console.log(responce);
+      console.log(responce);
 
-    //   if (responce.data.success == true) {
-    //     toast({
-    //       title: " Workflow Saved ",
-    //       description: `"${workflowName}" success fully save workflow.`,
-    //     });
-    //     navigate("/dashboard")
+      if (responce.data.success == true) {
+        toast({
+          title: " Workflow Saved ",
+          description: `"${workflowName}" success fully save workflow.`,
+        });
+        navigate("/dashboard")
 
-    //   }
-    //   console.log(createArray);
-    // } catch (error) {
-    //   toast({
-    //     title: " Workflow Saved failed",
-    //     description: `"${workflowName}" has been saved failed.`,
-    //   });
-    // }
+      }
+      console.log(createArray);
+    } catch (error) {
+      toast({
+        title: " Workflow Saved failed",
+        description: `"${workflowName}" has been saved failed.`,
+      });
+    }
   };
 
   //save telegram Data
