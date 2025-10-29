@@ -1,15 +1,37 @@
 version: '3.8'
 
 services:
-  primary-backend:
-    image: primary-backend
-    container_name: primary-backend
+  kafka:
+    image: apache/kafka:latest
+    container_name: kafka
+    restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "9092:9092"
     environment:
-      PORT: 3000
-      DATABASE_URL: "pondb?sslmode=require&channel_binding=require"
-      JWT_SECRET: "this is my key"
-      JWT_EXPIRES_IN: "24h"
-    restart: always
-  
+      # KRaft mode (no ZooKeeper)
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+
+      # Lightweight tuning
+      KAFKA_NUM_NETWORK_THREADS: 2
+      KAFKA_NUM_IO_THREADS: 2
+      KAFKA_NUM_REPLICA_FETCHERS: 1
+      KAFKA_QUEUED_MAX_REQUESTS: 10
+      KAFKA_NUM_PARTITIONS: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_MIN_INSYNC_REPLICAS: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_LOG_FLUSH_INTERVAL_MESSAGES: 1
+      KAFKA_LOG_FLUSH_INTERVAL_MS: 1000
+
+      # Reduce Java heap memory (most important)
+      KAFKA_HEAP_OPTS: "-Xmx256M -Xms128M"
+
+    volumes:
+      - ./kafka-data:/var/lib/kafka/data

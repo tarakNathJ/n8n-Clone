@@ -11,6 +11,7 @@ const kafka = new Kafka({
 
 
 let producer: Producer;
+// kafka producer instance provider
 async function CreateProducer(): Promise<Producer> {
     if (producer) return producer;
 
@@ -22,6 +23,9 @@ async function CreateProducer(): Promise<Producer> {
 
 let consumer: Consumer;
 
+
+
+//  kafka  consumer intance provider
 async function getConsumer(groupId = "default-group") {
     if (consumer) return consumer;
 
@@ -51,18 +55,9 @@ interface MessageFromWorker {
     stage: Number
 
 }
-/*
 
-                console.log("your data is : --", data);
 
-                const StapsRunData = await prisma.StapsRun.findUnique({
-                    where: {
-                        id: data.zapRun.StapsRunId
-                    }
-                })
-                console.log(StapsRunData);
-*/
-
+// execution engine
 async function workExecute() {
     try {
         const consumerForOrder = await getConsumer("N8N-CLONE")
@@ -122,7 +117,8 @@ async function workExecute() {
                     } else if (FindStaps?.name === "GMAIL") {
                         
                         const metadata = FindStaps.metadata as { EMAIL: string; PASSWORD: string ; MESSAGE:string };
-                        const ok = await SendEmail(metadata.EMAIL, metadata.PASSWORD, userData.email, metadata.MESSAGE);
+                        // @ts-ignore
+                        const ok = await SendEmail(metadata.EMAIL, metadata.PASSWORD, userData.email, metadata.MESSAGE ,StapsRunData.WorkFlowId,data.stage);
                         
                     }
 
@@ -164,11 +160,13 @@ async function workExecute() {
                         const ok = await sendMessageTelegram(metadata.TOKEN, metadata.CHAT_ID, (data as MessageFromWorker).UserMetaData);
                         
                     } else if (FindStaps?.name.toUpperCase() === "GMAIL") {
-                        const metadata = FindStaps.metadata as { email: string; password: string };
+                        const metadata = FindStaps.metadata as { EMAIL: string; PASSWORD: string };
                         // @ts-ignore
-                        // const ok = await SendEmail(metadata.email, metadata.password, (data as MessageFromWorker).UserMetaData.email as any | undefined, (data as MessageFromWorker).UserMetaData.message);
-                        const ok = await SendEmail(metadata.EMAIL, metadata.PASSWORD, data.UserMetaData.email, metadata.MESSAGE);
+                        const ok = await SendEmail(metadata.EMAIL, metadata.PASSWORD, data.UserMetaData.email, metadata.MESSAGE,data.WorkFlowID ,data.stage);
                         
+                    }else if (FindStaps?.name.toUpperCase() === "RESERVE_EMAIL_CHECKOUT"){
+                        console.log("RESERVE_EMAIL")
+                        return
                     }
 
                     const NextDataObject: MessageFromWorker = {

@@ -182,12 +182,14 @@ export const createStaps = async (req: Request, res: Response) => {
       });
     }
 
+    console.log("stage 1 ...................")
     if (batchOfdata.length == 0) {
       return res.status(400).json({
         success: false,
         message: "invalid data",
       });
     }
+    console.log("stage 1 ...................")
 
     const findUserAreExitOrNot = await prisma.user.findUnique({
       where: {
@@ -240,7 +242,7 @@ export const createStaps = async (req: Request, res: Response) => {
       _stapes.workflowId = findWorkFlowAreExitOrNot.id;
     });
 
-    // console.log(batchOfdata);
+    console.log(batchOfdata);
     const StoreData = await prisma.staps.createMany({
       data: batchOfdata,
     });

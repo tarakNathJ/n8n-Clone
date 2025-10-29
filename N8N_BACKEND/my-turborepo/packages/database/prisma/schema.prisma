@@ -90,6 +90,8 @@ model Staps {
 
 }
 
+
+
 model StapCondiction {
   id        Int    @id @default(autoincrement())
   key       String
@@ -105,6 +107,36 @@ model AutoWorkerValidate {
   curentTime DateTime
   curentStapId  Staps @relation(fields: [Stapid] , references: [id])
   
+}
+
+
+model sendEmailValidater {
+  id Int @id @default(autoincrement())
+  workflowID Int
+  email String 
+  messageID String @unique
+  index Int
+  status emailValidationStatus
+  createAt DateTime @default(now())
+}
+
+model reseiveEmailValiDater {
+  id         Int        @id @default(autoincrement())
+  workflowId Int
+  status     Workstatus
+  createAt   DateTime
+  updateAt   DateTime   @default(now())
+  useReseveEmailDatas userReseveEmailData[]
+}
+
+model userReseveEmailData {
+  id Int @id @default(autoincrement())
+  reseiveEmailValiDaterId  Int
+  UserData  Json  @default("{}")
+ 
+  status Workstatus
+  createAt DateTime @default(now())
+  relatedReseverEmailId reseiveEmailValiDater @relation(fields: [reseiveEmailValiDaterId], references: [id])
 }
 
 enum Type {
@@ -127,4 +159,11 @@ enum Workstatus {
   PANDING
   DONE
   FAILED
+}
+
+enum emailValidationStatus {
+  SUCCCESS 
+  PANDING
+  NEXTSTAGE
+  DONE
 }
