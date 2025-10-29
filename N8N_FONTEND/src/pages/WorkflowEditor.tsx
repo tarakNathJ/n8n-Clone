@@ -64,11 +64,16 @@ function WorkflowEditor() {
     PASSWORD: "",
     MESSAGE: "",
   });
-  const [reseveEmail, setReseveEmail] = useState({
+  const [seceduler, setSeceduler] = useState({
     EMAIL: "",
     PASSWORD: "",
     TIME:"DAY"
   });
+  const [receiveEmail, setReceiveEmail] = useState({
+    EMAIL: "",
+    PASSWORD: "",
+
+  })
   const [HTTP_Method, setHttpMethod] = useState("POST");
 
   const [workflowName, setWorkflowName] = useState(
@@ -299,6 +304,7 @@ function WorkflowEditor() {
       };
 
       if (data.data.name === "WebHook") {
+        console.log("save data")
         Obj.metadata = { HTTP_Method };
         Obj.typeOfWork = "NORMAL";
         Obj.status = "ACTIVE";
@@ -312,11 +318,19 @@ function WorkflowEditor() {
         Obj.metadata = telegramData;
         Obj.typeOfWork = "NORMAL";
         Obj.status = "ACTIVE";
-      } else if (data.data.name === "Reseve Email") {
+      } else if (data.data.name === "Schedule Trigger") {
         Obj.name = Obj.app = "RESEVE_EMAIL";
-        Obj.metadata = reseveEmail;
+        Obj.metadata = seceduler;
         Obj.typeOfWork = "AUTOMATIC";
         Obj.status = "ACTIVE";
+        console.log(seceduler);
+      } else if (data.data.name === "Receive Email"){
+        Obj.name = Obj.app = "RESERVE_EMAIL_CHECKOUT";
+        Obj.metadata =receiveEmail;
+        Obj.typeOfWork = "AUTOMATIC";
+        Obj.status = "ACTIVE";
+
+
       }
 
       return Obj;
@@ -326,39 +340,39 @@ function WorkflowEditor() {
 
     
 
-    try {
+    // try {
      
-      const responce: any = await axios.post(
-        `${import.meta.env.VITE_WORKFLOW_BACKEND}/createSteps`,
-        {
-          email: userObj.email,
-          workflowId: workflowId,
-          batchOfdata: createArray,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+    //   const responce: any = await axios.post(
+    //     `${import.meta.env.VITE_WORKFLOW_BACKEND}/createSteps`,
+    //     {
+    //       email: userObj.email,
+    //       workflowId: workflowId,
+    //       batchOfdata: createArray,
+    //     },
+    //     {
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //     }
+    //   );
 
-      console.log(responce);
+    //   console.log(responce);
 
-      if (responce.data.success == true) {
-        toast({
-          title: " Workflow Saved ",
-          description: `"${workflowName}" success fully save workflow.`,
-        });
-        navigate("/dashboard")
+    //   if (responce.data.success == true) {
+    //     toast({
+    //       title: " Workflow Saved ",
+    //       description: `"${workflowName}" success fully save workflow.`,
+    //     });
+    //     navigate("/dashboard")
 
-      }
-      console.log(createArray);
-    } catch (error) {
-      toast({
-        title: " Workflow Saved failed",
-        description: `"${workflowName}" has been saved failed.`,
-      });
-    }
+    //   }
+    //   console.log(createArray);
+    // } catch (error) {
+    //   toast({
+    //     title: " Workflow Saved failed",
+    //     description: `"${workflowName}" has been saved failed.`,
+    //   });
+    // }
   };
 
   //save telegram Data
@@ -378,13 +392,22 @@ function WorkflowEditor() {
     })
   };
 
-  const ReseveEmails = async () => {
-    
+  const scheduler = async () => {
+    console.log(seceduler)
     toast({
-      title: "save reseve Email meta data",
-      description: `${reseveEmail} : success fully save data`,
+      title: "save   meta data",
+      description: ` success fully save data`,
     })
   };
+
+    const receveEmail = async () => {
+    console.log(receiveEmail)
+    toast({
+      title: "save   meta data",
+      description: ` success fully save data`,
+    })
+  };
+  
 
   // save email data
   const OnchangeHandelerEmail = (event) => {
@@ -411,14 +434,24 @@ function WorkflowEditor() {
     })
   };
 
-  // save reseve email data
-  const OnchangeHandelReseveEmail = async (event) => {
+  // save sechduler email data
+  const OnchangeHandelSchedulerEmail = async (event: { target: { name: any; value: any; }; }) => {
     const { name, value } = event.target;
-    setReseveEmail({
-      ...reseveEmail,
+    setSeceduler({
+      ...seceduler,
       [name]: value,
     });
   };
+
+  // save Reseve Email data 
+  const OnChangeHandelSchedulerEmail =  async (event)=>{
+    const { name, value } = event.target;
+    setReceiveEmail({
+      ...receiveEmail,
+      [name]:value,
+    })
+  }
+
 
   return (
     <div className="flex h-screen bg-n8n-canvas ">
@@ -630,7 +663,7 @@ function WorkflowEditor() {
                             app Password
                           </label>
                           <Input
-                            placeholder="djsv kasj wyet pqwo"
+                            placeholder=" email application password "
                             name="PASSWORD"
                             onChange={OnchangeHandelerEmail}
                             className="bg-n8n-header border-n8n-node-border text-n8n-sidebar-foreground"
@@ -731,7 +764,7 @@ function WorkflowEditor() {
                         </div>
                       </>
                     )}
-                    {selectedNode.data.type === "RESEVE_EMAIL" && (
+                    {selectedNode.data.type === "Schedule_Trigger" && (
                       <>
                         <div>
                           <label className="block text-sm font-medium text-n8n-sidebar-foreground mb-2">
@@ -741,7 +774,7 @@ function WorkflowEditor() {
                             placeholder="enter your email"
                             className="bg-n8n-header border-n8n-node-border text-n8n-sidebar-foreground"
                             name="EMAIL"
-                            onChange={OnchangeHandelReseveEmail}
+                            onChange={OnchangeHandelSchedulerEmail}
                           />
                         </div>
 
@@ -751,7 +784,7 @@ function WorkflowEditor() {
                           </label>
                           <Input
                             placeholder="  app password "
-                            onChange={OnchangeHandelReseveEmail}
+                            onChange={OnchangeHandelSchedulerEmail}
                             name="PASSWORD"
                             className="bg-n8n-header border-n8n-node-border text-n8n-sidebar-foreground"
                           />
@@ -760,7 +793,46 @@ function WorkflowEditor() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={ReseveEmails}
+                            onClick={scheduler}
+                            // onClick={}   // <-- ADDED handler
+                            className="w-full border-white text-green-100 bg-[#262e2b]  hover:bg-green-500/20"
+                          >
+                            <Save className="h-4 w-4 mr-2" />
+                            save
+                          </Button>
+                        </div>
+                      </>
+                    )}
+                    {selectedNode.data.type === "RECEIVE_EMAIL" && (
+                      <>
+                        <div>
+                          <label className="block text-sm font-medium text-n8n-sidebar-foreground mb-2">
+                            email
+                          </label>
+                          <Input
+                            placeholder="enter your email"
+                            className="bg-n8n-header border-n8n-node-border text-n8n-sidebar-foreground"
+                            name="EMAIL"
+                            onChange={OnChangeHandelSchedulerEmail}
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-n8n-sidebar-foreground mb-2">
+                            app password
+                          </label>
+                          <Input
+                            placeholder="  app password "
+                            onChange={OnChangeHandelSchedulerEmail}
+                            name="PASSWORD"
+                            className="bg-n8n-header border-n8n-node-border text-n8n-sidebar-foreground"
+                          />
+                        </div>
+                        <div className="pt-4 border-t  border-n8n-node-border">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={receveEmail}
                             // onClick={}   // <-- ADDED handler
                             className="w-full border-white text-green-100 bg-[#262e2b]  hover:bg-green-500/20"
                           >
