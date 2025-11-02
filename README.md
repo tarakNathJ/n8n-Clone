@@ -6,7 +6,7 @@ This project is a distributed workflow automation system built with multiple mic
 
 ## Architecture
 
-The system consists of the following components:
+The system consists of the following components: https://deepwiki.com/tarakNathJ/n8n-Clone/2.1-workflow-editor
 
 ### Core Services
 
